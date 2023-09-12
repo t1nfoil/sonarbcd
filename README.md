@@ -4,7 +4,7 @@ To get started with sonarbcd repository, follow these steps to clone it to your 
 
 1. **Clone the Repository**
    - Execute the following command to clone the SonarBCD repository:
-     `git clone git@github.com:SonarSoftwareInc/sonarbcd.git`
+     `git clone git@github.com:t1nfoil/sonarbcd.git`
      
 2. **Navigate to the Cloned Repository**
    - Once the cloning process is complete, navigate into the cloned directory using the `cd` command:
