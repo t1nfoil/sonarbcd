@@ -344,7 +344,6 @@ func generateLabels(templateData []BroadbandData) error {
 		fmt.Fprintln(templateWriter, `<rect x="0" y="0" width="605" height="100%" style="fill:white" />`)
 		fmt.Fprintln(templateWriter, `<rect x="5" y="5" width="595" height="99.5%" style="fill:none;stroke:black;stroke-width:3" />`)
 
-		//label.labelBorder(canvas)
 		label.labelTitle(canvas, 0, "Broadband Facts", fontList)
 		label.providerBlock(canvas, 0, template, fontList)
 		label.monthlyPrice(canvas, 0, template, fontList)
