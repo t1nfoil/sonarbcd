@@ -14,7 +14,6 @@ To get started with sonarbcd repository, follow these steps to clone it to your 
    - These are located in the binaries/ folder off of the repository root.
    - sonarbcd.exe -> Windows
    - sonarbcd_linux -> Linux
-   - sonarbcd_macos -> Mac
      
 5. **Install golang if building from source (Optional)**
    - Download your appropriate version for your OS from [https://go.dev/dl/](the golang website).
@@ -40,16 +39,16 @@ The program accepts several command-line flags to customize its behavior:
 
 ```
 # Convert custom CSV file
-$ ./sonarbcd -inputcsv=mydata.csv
+$ sonarbcd.exe -inputcsv=mydata.csv
 
 # Output to a specific directory
-$ ./sonarbcd -outputdir=./output
+$ sonarbcd.exe -outputdir=./output
 
 # Interpret speeds in Mbps
-$ ./sonarbcd -uldlmbps
+$ sonarbcd.exe -uldlmbps
 
 # Perform basic checks on the CSV file
-$ ./sonarbcd -checkcsv
+$ sonarbcd.exe -checkcsv
 ```
 
 ## CSV Field Parameters ##
