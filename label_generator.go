@@ -333,7 +333,7 @@ func generateLabels(templateData []BroadbandData) error {
 		templateWriter := io.Writer(templateFile)
 
 		canvas := svg.New(templateWriter)
-		canvas.Startpercent(100, 100, "id=\"bcd\"")
+		canvas.Startpercent(100, 100, "id=\"bcd\"", "viewBox=\"0 0 431 972\"")
 		canvas.Gid("content-group")
 		setTemplateStyles(canvas)
 		fontList := "Roboto"
