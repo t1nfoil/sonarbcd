@@ -25,12 +25,14 @@
 <script type="application/javascript">
 <![CDATA[
 
-	window.addEventListener('load', function() {
-	        var contentGroup = document.getElementById('content-group');
-	        var bbox = contentGroup.getBBox();
-	        var svg = document.getElementById('bcd');
-	        svg.setAttribute('height', bbox.height);
-	});
+    window.addEventListener('load', function() {
+	    var contentGroup = document.getElementById('content-group');
+	    var bbox = contentGroup.getBBox();
+	    var svg = document.getElementById('bcd');
+	    svg.setAttribute('height', bbox.height);
+	    var vBox = "0 0 " + bbox.width + " " + bbox.height;
+	    svg.setAttribute('viewBox', vBox);
+    });
 
 ]]>
 </script>
@@ -41,7 +43,7 @@
 <line x1="25" y1="75" x2="580" y2="75" style="stroke:black;stroke-width:1" />
 </g>
 <g style="">
-<text x="25" y="105" style="font-size:18pt;font-weight:bold;font-family:'Roboto';text-anchor:left" >Greystarddddddddddddddd3433333333333</text>
+<text x="25" y="105" style="font-size:18pt;font-weight:bold;font-family:'Roboto';text-anchor:left" >Greystar</text>
 <text x="25" y="135" style="font-size:14pt;font-weight:800;font-family:'Roboto Flex';text-anchor:left" >Northern Neck 100/100MBPS Fiber</text>
 <text x="25" y="165" style="font-size:14pt;font-family:Roboto;text-anchor:left" >Fixed Broadband Consumer Disclosure</text>
 <line x1="25" y1="175" x2="580" y2="175" style="stroke:black;stroke-width:12" />

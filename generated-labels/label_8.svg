@@ -25,12 +25,14 @@
 <script type="application/javascript">
 <![CDATA[
 
-	window.addEventListener('load', function() {
-	        var contentGroup = document.getElementById('content-group');
-	        var bbox = contentGroup.getBBox();
-	        var svg = document.getElementById('bcd');
-	        svg.setAttribute('height', bbox.height);
-	});
+    window.addEventListener('load', function() {
+	    var contentGroup = document.getElementById('content-group');
+	    var bbox = contentGroup.getBBox();
+	    var svg = document.getElementById('bcd');
+	    svg.setAttribute('height', bbox.height);
+	    var vBox = "0 0 " + bbox.width + " " + bbox.height;
+	    svg.setAttribute('viewBox', vBox);
+    });
 
 ]]>
 </script>

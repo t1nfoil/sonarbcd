@@ -311,12 +311,14 @@ func (b *BroadbandConsumerLabel) uniquePlanIdentifier(canvas *svg.SVG, thisSecti
 }
 
 var resizeJsScript = `
-	window.addEventListener('load', function() {
-	        var contentGroup = document.getElementById('content-group');
-	        var bbox = contentGroup.getBBox();
-	        var svg = document.getElementById('bcd');
-	        svg.setAttribute('height', bbox.height);
-	});
+    window.addEventListener('load', function() {
+	    var contentGroup = document.getElementById('content-group');
+	    var bbox = contentGroup.getBBox();
+	    var svg = document.getElementById('bcd');
+	    svg.setAttribute('height', bbox.height);
+	    var vBox = "0 0 " + bbox.width + " " + bbox.height;
+	    svg.setAttribute('viewBox', vBox);
+    });
 `
 
 func generateLabels(templateData []BroadbandData) error {
