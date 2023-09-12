@@ -33,7 +33,7 @@
 
 ]]>
 </script>
-<rect x="0" y="0" width="605" height="99%" style="fill:none;stroke:white;stroke-width:5" />
+<rect x="0" y="0" width="605" height="100%" style="fill:none;stroke:white;stroke-width:5" />
 <rect x="5" y="5" width="595" height="99.5%" style="fill:none;stroke:black;stroke-width:3" />
 <g style="">
 <text x="302" y="65" style="font-size:48pt;font-weight:945;font-family:'Roboto Flex';text-anchor:middle" >Broadband Facts</text>
@@ -47,7 +47,7 @@
 </g>
 <g style="">
 <text x="25" y="205" style="font-size:18pt;font-weight:800;font-family:'Roboto Flex';text-anchor:left" >Monthly Price</text>
-<text x="580" y="205" style="font-size:18pt;font-weight:800;font-family:'Roboto Flex';text-anchor:end" >$15.00</text>
+<text x="580" y="205" style="font-size:18pt;font-weight:800;font-family:'Roboto Flex';text-anchor:end" >$30.00</text>
 <line x1="25" y1="215" x2="580" y2="215" style="stroke:black;stroke-width:3" />
 </g>
 <g style="">

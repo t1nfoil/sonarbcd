@@ -33,7 +33,7 @@
 
 ]]>
 </script>
-<rect x="0" y="0" width="605" height="99%" style="fill:none;stroke:white;stroke-width:5" />
+<rect x="0" y="0" width="605" height="100%" style="fill:none;stroke:white;stroke-width:5" />
 <rect x="5" y="5" width="595" height="99.5%" style="fill:none;stroke:black;stroke-width:3" />
 <g style="">
 <text x="302" y="65" style="font-size:48pt;font-weight:945;font-family:'Roboto Flex';text-anchor:middle" >Broadband Facts</text>
@@ -55,7 +55,7 @@
 <text x="40" y="265" style="font-size:12pt;font-family:Roboto;text-anchor:left" >Introductory Period</text>
 <text x="580" y="265" style="font-size:12pt;font-weight:900;font-family:Roboto;text-anchor:end" >4 months</text>
 <text x="40" y="290" style="font-size:12pt;font-family:Roboto;text-anchor:left" >Price after introductory period</text>
-<text x="580" y="290" style="font-size:12pt;font-weight:900;font-family:Roboto;text-anchor:end" >$13.34</text>
+<text x="580" y="290" style="font-size:12pt;font-weight:900;font-family:Roboto;text-anchor:end" >$34.95</text>
 <text x="25" y="315" style="font-size:14pt;font-family:Roboto;text-anchor:left" >This Monthly Price requires a 12 month<a xlink:href="https://fontsinuse.com/" xlink:title="contract">
 <tspan style="fill:blue" >contract</tspan></a>
 </text>

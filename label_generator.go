@@ -341,7 +341,7 @@ func generateLabels(templateData []BroadbandData) error {
 
 		var label BroadbandConsumerLabel
 
-		fmt.Fprintln(templateWriter, `<rect x="0" y="0" width="605" height="100%" style="fill:none;stroke:white;stroke-width:5" />`)
+		fmt.Fprintln(templateWriter, `<rect x="0" y="0" width="605" height="100%" style="fill:white" />`)
 		fmt.Fprintln(templateWriter, `<rect x="5" y="5" width="595" height="99.5%" style="fill:none;stroke:black;stroke-width:3" />`)
 
 		//label.labelBorder(canvas)

@@ -33,7 +33,7 @@
 
 ]]>
 </script>
-<rect x="0" y="0" width="605" height="99%" style="fill:none;stroke:white;stroke-width:5" />
+<rect x="0" y="0" width="605" height="100%" style="fill:none;stroke:white;stroke-width:5" />
 <rect x="5" y="5" width="595" height="99.5%" style="fill:none;stroke:black;stroke-width:3" />
 <g style="">
 <text x="302" y="65" style="font-size:48pt;font-weight:945;font-family:'Roboto Flex';text-anchor:middle" >Broadband Facts</text>
@@ -97,7 +97,7 @@
 <g style="">
 <text x="25" y="820" style="font-size:14pt;font-weight:bold;font-family:'Roboto Flex';text-anchor:left" >Plan Speeds</text>
 <text x="40" y="845" style="font-size:14pt;font-family:Roboto;text-anchor:left" >Typical Download Speed</text>
-<text x="580" y="845" style="font-size:14pt;font-weight:900;font-family:Roboto;text-anchor:end" >30.00 Mbps</text>
+<text x="580" y="845" style="font-size:14pt;font-weight:900;font-family:Roboto;text-anchor:end" >100.00 Mbps</text>
 <text x="40" y="870" style="font-size:14pt;font-family:Roboto;text-anchor:left" >Typical Upload Speed</text>
 <text x="580" y="870" style="font-size:14pt;font-weight:900;font-family:Roboto;text-anchor:end" >100.00 Mbps</text>
 <text x="40" y="895" style="font-size:14pt;font-family:Roboto;text-anchor:left" >Typical Latency</text>
