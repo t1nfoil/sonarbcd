@@ -9,10 +9,18 @@ To get started with sonarbcd repository, follow these steps to clone it to your 
 2. **Navigate to the Cloned Repository**
    - Once the cloning process is complete, navigate into the cloned directory using the `cd` command:
      `cd sonarbcd`
+
+3. **Run the pre-compiled binary for your OS version**
+   - These are located in the binaries/ folder off of the repository root.
+   - sonarbcd.exe -> Windows
+   - sonarbcd_linux -> Linux
+   - sonarbcd_macos -> Mac
      
-3. **Install golang if building from source (Optional)**
+5. **Install golang if building from source (Optional)**
    - Download your appropriate version for your OS from [https://go.dev/dl/](the golang website).
    - Then in the `sonarbcd` repo directory, run `go build` to generate the `sonarbcd` binary.
+  
+
 
 ## sonarbcd Usage ##
 
