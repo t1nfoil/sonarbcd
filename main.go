@@ -62,28 +62,31 @@ func main() {
 	flag.StringVar(&outputDirectory, "outputdir", "./generated-labels", "the name of the directory to output the generated files to")
 	flag.Parse()
 
+	// set up customer logger
+	logger := log.New(os.Stderr, "", 0)
+
 	err := checkCsvRecords()
 	if err != nil {
-		log.Fatal(err)
-		return
+
+		logger.Fatalln(convertErrorToJSON(err.Error()))
 	}
 
 	if _, err := os.Stat(outputDirectory); os.IsNotExist(err) {
 		err := os.Mkdir(outputDirectory, 0755)
 		if err != nil {
-			log.Fatalln("error:", err)
+			log.Fatalln(convertErrorToJSON(err.Error()))
 			return
 		}
 	}
 
 	if _, err := os.Stat(csvFileName); os.IsNotExist(err) {
-		log.Fatalln("error:", err)
+		log.Fatalln(convertErrorToJSON(err.Error()))
 		return
 	}
 
 	records, err := loadCSV(csvFileName)
 	if err != nil {
-		log.Fatalln("Error:", err)
+		log.Fatalln(convertErrorToJSON(err.Error()))
 		return
 	}
 
@@ -130,7 +133,7 @@ func main() {
 
 		err := calculateUploadDownloadSpeeds(&templateEntry)
 		if err != nil {
-			log.Fatalln("error:", err)
+			log.Fatalln(convertErrorToJSON(err.Error()))
 			return
 		}
 
@@ -140,7 +143,7 @@ func main() {
 
 		err = calculateMonthlyPrice(&templateEntry)
 		if err != nil {
-			log.Fatalln("error:", err)
+			log.Fatalln(convertErrorToJSON(err.Error()))
 			return
 		}
 
@@ -155,12 +158,12 @@ func main() {
 							if fieldValue != "" {
 								indexStr := strconv.Itoa(indexNumber)
 								if _, ok := data[extraFieldType+indexStr]; !ok {
-									log.Fatalln("error: missing associated field for", fieldName)
+									log.Fatalln(convertErrorToJSON("error: missing associated field for", fieldName))
 									continue
 								}
 
 								if data[extraFieldType+indexStr] == "" {
-									log.Fatalln("error: empty value for", fieldName)
+									log.Fatalln(convertErrorToJSON("error: empty value for", fieldName))
 									continue
 								}
 
@@ -184,7 +187,7 @@ func main() {
 								}
 							}
 						} else {
-							log.Fatalln("error converting index number:", err)
+							log.Fatalln(convertErrorToJSON("error converting index number:", err.Error()))
 						}
 					}
 				}

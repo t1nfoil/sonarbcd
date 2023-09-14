@@ -35,7 +35,6 @@ func checkCsvRecords() error {
 		if err != nil {
 			return err
 		}
-
 	}
 
 	return nil

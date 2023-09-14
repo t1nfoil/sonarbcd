@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"math"
 	"strconv"
 	"strings"
@@ -15,4 +17,17 @@ func convertPriceToCents(price string) (int, error) {
 
 	priceCents := int(math.Round(priceFloat * 100))
 	return priceCents, nil
+}
+
+type jsonError struct {
+	isError string `json:"isError"`
+	Message string `json:"Message"`
+}
+
+func convertErrorToJSON(messages ...string) error {
+	var j jsonError
+	j.isError = "true"
+	j.Message = strings.Join(messages, " ")
+	json, _ := json.Marshal(j)
+	return errors.New(string(json))
 }
