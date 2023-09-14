@@ -61,14 +61,11 @@ var outputDirectory string
 func main() {
 	flag.StringVar(&csvFileName, "inputcsv", "bcd.csv", "the name of the csv file to convert")
 	flag.StringVar(&outputDirectory, "outputdir", "./generated-labels", "the name of the directory to output the generated files to")
-	checkCsv := flag.Bool("checkcsv", false, "check the csv file for errors (basic checks)")
 	flag.Parse()
 
-	if *checkCsv {
-		err := checkCsvRecords()
-		if err != nil {
-			log.Fatal(err)
-		}
+	err := checkCsvRecords()
+	if err != nil {
+		log.Fatal(err)
 		return
 	}
 
