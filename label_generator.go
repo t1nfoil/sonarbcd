@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -11,24 +10,32 @@ import (
 )
 
 var (
-	width = 605
+	width                  = 431
+	xMargin                = 14
+	xParagraph             = 35
+	xFeeLine               = 55
+	xMarginRightIndent     = 25
+	xMarginRightIndentHard = 106
+	xIndent                = 29
 )
 
 const (
-	labelTitle                               = "font-size:48pt;font-weight:945;font-family:'Roboto Flex';text-anchor:middle"
-	labelCompanyName                         = "font-size:18pt;font-weight:bold;font-family:'Roboto';text-anchor:left"
-	labelPackageName                         = "font-size:14pt;font-weight:800;font-family:'Roboto Flex';text-anchor:left"
-	labelGenericTextNormal                   = "font-size:14pt;font-family:Roboto;text-anchor:left"
-	labelGenericTextNormalBold               = "font-size:14pt;font-weight:900;font-family:Roboto;text-anchor:left"
-	labelGenericTextNormalBoldAnchorEnd      = "font-size:14pt;font-weight:bold;font-family:'Roboto Flex';text-anchor:end"
-	labelGenericTextNormalHeavyBoldAnchorEnd = "font-size:14pt;font-weight:900;font-family:Roboto;text-anchor:end"
-	labelGenericTextSmall                    = "font-size:12pt;font-family:Roboto;text-anchor:left"
-	labelGenericTextSmallBoldAnchorEnd       = "font-size:12pt;font-weight:900;font-family:Roboto;text-anchor:end"
-	labelMonthlyPrice                        = "font-size:18pt;font-weight:800;font-family:'Roboto Flex';text-anchor:left"
-	labelMonthlyPriceValue                   = "font-size:18pt;font-weight:800;font-family:'Roboto Flex';text-anchor:end"
-	labelSectionHeading                      = "font-size:14pt;font-weight:bold;font-family:'Roboto Flex';text-anchor:left"
-	labelFccLink                             = "font-size:14pt;font-family:'Roboto Flex';text-anchor:end"
-	labelUniquePlanId                        = "font-size:12pt;font-family:Roboto;text-anchor:left"
+	labelTitle                                 = "font-size:36pt;font-weight:900;font-family:'Roboto Flex';letter-spacing:0em"
+	labelCompanyName                           = "font-size:18pt;letter-spacing:0em;font-weight:bold;font-family:'Roboto';text-anchor:left"
+	labelPackageName                           = "font-size:14pt;letter-spacing:0em;font-weight:800;font-family:'Roboto Flex';text-anchor:left"
+	labelGenericTextNormal                     = "font-size:12pt;letter-spacing:0em;font-family:Roboto;text-anchor:left"
+	labelGenericTextNormalBold                 = "font-size:12pt;letter-spacing:0em;font-weight:900;font-family:Roboto;text-anchor:left"
+	labelGenericTextNormalBoldAnchorEnd        = "font-size:12pt;letter-spacing:0em;font-weight:bold;font-family:'Roboto Flex';text-anchor:end"
+	labelGenericTextNormalBoldAnchorStart      = "font-size:12pt;letter-spacing:0em;font-weight:bold;font-family:'Roboto Flex';text-anchor:start"
+	labelGenericTextNormalHeavyBoldAnchorEnd   = "font-size:12pt;letter-spacing:0em;font-weight:900;font-family:Roboto;text-anchor:end"
+	labelGenericTextNormalHeavyBoldAnchorStart = "font-size:12pt;letter-spacing:0em;font-weight:900;font-family:Roboto;text-anchor:start"
+	labelGenericTextSmall                      = "font-size:10pt;letter-spacing:0em;font-family:Roboto;text-anchor:left"
+	labelGenericTextSmallBoldAnchorEnd         = "font-size:10pt;letter-spacing:0em;font-weight:900;font-family:Roboto;text-anchor:end"
+	labelMonthlyPrice                          = "font-size:18pt;letter-spacing:0em;font-weight:800;font-family:'Roboto Flex';text-anchor:left"
+	labelMonthlyPriceValue                     = "font-size:18pt;letter-spacing:0em;font-weight:800;font-family:'Roboto Flex';text-anchor:end"
+	labelSectionHeading                        = "font-size:14pt;letter-spacing:0em;font-weight:bold;font-family:'Roboto Flex';text-anchor:left"
+	labelFccLink                               = "font-size:14pt;letter-spacing:0em;font-family:'Roboto Flex';text-anchor:end"
+	labelUniquePlanId                          = "font-size:12pt;letter-spacing:0em;font-family:Roboto;text-anchor:left"
 )
 
 var templateStyle = `
@@ -65,33 +72,34 @@ func (b *BroadbandConsumerLabel) getY() int {
 	return b.yCounter
 }
 
-func (b *BroadbandConsumerLabel) labelTitle(canvas *svg.SVG, thisSectionYStart int, title string, fontList string) {
+func (b *BroadbandConsumerLabel) labelTitle(canvas *svg.SVG, thisSectionYStart int) {
 	canvas.Gstyle("")
-	canvas.Text(width/2, b.addY(65), title, labelTitle)
-	canvas.Line(25, b.addY(10), width-25, b.getY(), "stroke:black;stroke-width:1")
+	canvas.Text(xMargin, b.addY(55), "Broadband", labelTitle)
+	canvas.Text(285, b.getY(), "Facts", labelTitle)
+	canvas.Line(xMargin, b.addY(4), width-xMargin, b.getY(), "stroke:black;stroke-width:1")
 	canvas.Gend()
 }
 
 func (b *BroadbandConsumerLabel) providerBlock(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(25, b.addY(30), template.CompanyName, labelCompanyName)
-	canvas.Text(25, b.addY(30), template.DataServiceName, labelPackageName)
+	canvas.Text(xMargin, b.addY(25), template.CompanyName, labelCompanyName)
+	canvas.Text(xMargin, b.addY(20), template.DataServiceName, labelPackageName)
 	providerServiceType := ""
 	if template.FixedOrMobile == "Fixed" {
 		providerServiceType = "Fixed Broadband Consumer Disclosure"
 	} else {
 		providerServiceType = "Mobile Broadband Consumer Disclosure"
 	}
-	canvas.Text(25, b.addY(30), providerServiceType, labelGenericTextNormal)
-	canvas.Line(25, b.addY(10), width-25, b.getY(), "stroke:black;stroke-width:12")
+	canvas.Text(xMargin, b.addY(21), providerServiceType, labelGenericTextNormal)
+	canvas.Line(xMargin, b.addY(9), width-xMargin, b.getY(), "stroke:black;stroke-width:12")
 	canvas.Gend()
 }
 
 func (b *BroadbandConsumerLabel) monthlyPrice(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(25, b.addY(30), "Monthly Price", labelMonthlyPrice)
-	canvas.Text((width - 25), b.getY(), "$"+template.MonthlyPrice+"", labelMonthlyPriceValue)
-	canvas.Line(25, b.addY(10), width-25, b.getY(), "stroke:black;stroke-width:3")
+	canvas.Text(xMargin, b.addY(30), "Monthly Price", labelMonthlyPrice)
+	canvas.Text((width - xMargin), b.getY(), "$"+template.MonthlyPrice+"", labelMonthlyPriceValue)
+	canvas.Line(xMargin, b.addY(8), width-xMargin, b.getY(), "stroke:black;stroke-width:3")
 	canvas.Gend()
 }
 
@@ -99,13 +107,13 @@ func (b *BroadbandConsumerLabel) monthlyDetails(canvas *svg.SVG, thisSectionYSta
 	canvas.Gstyle("")
 	// is introductory or not?
 	if template.IntroductoryRate {
-		canvas.Text(25, b.addY(25), "This Monthly Price is an introductory rate.", labelGenericTextNormal)
-		lineY := b.addY(25)
-		canvas.Text(40, lineY, "Introductory Period", labelGenericTextSmall)
-		canvas.Text((width - 25), lineY, template.IntroductoryPeriodInMonths+" months", labelGenericTextSmallBoldAnchorEnd)
-		lineY = b.addY(25)
-		canvas.Text(40, lineY, "Price after introductory period", labelGenericTextSmall)
-		canvas.Text((width - 25), lineY, "$"+template.DataServicePrice, labelGenericTextSmallBoldAnchorEnd)
+		canvas.Text(xMargin, b.addY(20), "This Monthly Price is an introductory rate.", labelGenericTextNormal)
+		lineY := b.addY(14)
+		canvas.Text(xIndent, lineY, "Introductory Period", labelGenericTextNormal)
+		canvas.Text((width - xMargin), lineY, template.IntroductoryPeriodInMonths+" months", labelGenericTextNormalBoldAnchorEnd)
+		lineY = b.addY(17)
+		canvas.Text(xIndent, lineY, "Price after introductory period", labelGenericTextNormal)
+		canvas.Text((width - xMargin), lineY, "$"+template.DataServicePrice, labelGenericTextNormalBoldAnchorEnd)
 		contractDuration, err := strconv.Atoi(template.ContractDuration)
 		if err != nil {
 			fmt.Println("error:", err)
@@ -118,86 +126,88 @@ func (b *BroadbandConsumerLabel) monthlyDetails(canvas *svg.SVG, thisSectionYSta
 			aOrAn = "a"
 		}
 		contractTerms := "This Monthly Price requires " + aOrAn + " " + template.ContractDuration + " month"
-		canvas.Textspan(25, b.addY(25), contractTerms, labelGenericTextNormal)
+		canvas.Textspan(xMargin, b.addY(17), contractTerms, labelGenericTextNormal)
 		canvas.Link(template.ContractURL, "contract")
 		// css for blue a links
 		canvas.Span("contract", "fill:blue")
 		canvas.LinkEnd()
 		canvas.TextEnd()
 	} else {
-		canvas.Text(25, b.addY(25), "This Monthly Price is not an introductory rate.", labelGenericTextNormal)
-		canvas.Text(25, b.addY(25), "This Monthly Price does not require a contract.", labelGenericTextNormal)
+		canvas.Text(xMargin, b.addY(17), "This Monthly Price is not an introductory rate.", labelGenericTextNormal)
+		canvas.Text(xMargin, b.addY(17), "This Monthly Price does not require a contract.", labelGenericTextNormal)
 	}
-	lineY := b.addY(10)
-	canvas.Line(25, lineY, width-25, lineY, "stroke:black;stroke-width:1")
+	lineY := b.addY(12)
+	canvas.Line(xMargin, lineY, width-xMargin, lineY, "stroke:black;stroke-width:1")
 	canvas.Gend()
 }
 
 // TODO limit to 37 characters or less..
 func (b *BroadbandConsumerLabel) additionalChargesAndTerms(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(25, b.addY(25), "Additional Charges & Terms", labelSectionHeading)
+	canvas.Text(xMargin, b.addY(23), "Additional Charges & Terms", labelSectionHeading)
 
-	canvas.Text(25, b.addY(35), "Provider Monthly Fees", labelGenericTextNormal)
+	canvas.Text(xParagraph, b.addY(17), "Provider Monthly Fees", labelGenericTextNormal)
 	if len(template.ExtraMonthlyFields) > 0 {
 		for _, charge := range template.ExtraMonthlyFields {
 			charge.ChargeValue = strings.TrimPrefix(charge.ChargeValue, "$")
-			canvas.Text(55, b.addY(25), charge.ChargeName, labelGenericTextSmall)
-			canvas.Text((width - 25), b.getY(), "$"+charge.ChargeValue, labelGenericTextSmallBoldAnchorEnd)
+			canvas.Text(xFeeLine, b.addY(17), charge.ChargeName, labelGenericTextNormal)
+			canvas.Text((width - xMarginRightIndent), b.getY(), "$"+charge.ChargeValue, labelGenericTextNormalBoldAnchorEnd)
 		}
 	} else {
-		canvas.Text(55, b.addY(25), "No additional monthly fees", labelGenericTextNormal)
+		canvas.Text(xFeeLine, b.addY(17), "No additional monthly fees", labelGenericTextNormal)
 	}
 
-	canvas.Text(25, b.addY(35), "One-time Fees at the Time of Purchase", labelGenericTextNormal)
+	canvas.Text(xParagraph, b.addY(35), "One-time Fees at the Time of Purchase", labelGenericTextNormal)
 	if len(template.ExtraOneTimeFields) > 0 {
 		for _, charge := range template.ExtraOneTimeFields {
 			charge.ChargeValue = strings.TrimPrefix(charge.ChargeValue, "$")
-			canvas.Text(55, b.addY(25), charge.ChargeName, labelGenericTextSmall)
-			canvas.Text((width - 25), b.getY(), "$"+charge.ChargeValue, labelGenericTextSmallBoldAnchorEnd)
+			canvas.Text(xFeeLine, b.addY(17), charge.ChargeName, labelGenericTextNormal)
+			canvas.Text((width - xMarginRightIndent), b.getY(), "$"+charge.ChargeValue, labelGenericTextNormalBoldAnchorEnd)
 		}
 	} else {
-		canvas.Text(55, b.addY(25), "No additional one-time fees at time of purchase", labelGenericTextNormal)
+		canvas.Text(xFeeLine, b.addY(17), "No additional one-time fees at time of purchase", labelGenericTextNormal)
 
 	}
 
 	if template.EarlyTerminationFee != "" {
 		template.EarlyTerminationFee = strings.TrimPrefix(template.EarlyTerminationFee, "$")
-		canvas.Text(25, b.addY(35), "Early Termination Fee", labelGenericTextNormal)
-		canvas.Text((width - 25), b.getY(), "$"+template.EarlyTerminationFee, labelGenericTextNormalHeavyBoldAnchorEnd)
+		canvas.Text(xParagraph, b.addY(35), "Early Termination Fee", labelGenericTextNormal)
+		canvas.Text((width - xMarginRightIndent), b.getY(), "$"+template.EarlyTerminationFee, labelGenericTextNormalBoldAnchorEnd)
 	} else {
-		canvas.Text(25, b.addY(35), "Early Termination Fee", labelGenericTextNormal)
-		canvas.Text((width - 25), b.getY(), "None", labelGenericTextNormalHeavyBoldAnchorEnd)
+		canvas.Text(xParagraph, b.addY(35), "Early Termination Fee", labelGenericTextNormal)
+		canvas.Text((width - xMarginRightIndent), b.getY(), "None", labelGenericTextNormalHeavyBoldAnchorEnd)
 	}
-	canvas.Text(25, b.addY(35), "Government Taxes", labelGenericTextNormal)
-	canvas.Text((width - 25), b.getY(), "Varies by Location", labelGenericTextNormalHeavyBoldAnchorEnd)
-	canvas.Line(25, b.addY(10), width-25, b.getY(), "stroke:black;stroke-width:3")
+	canvas.Text(xParagraph, b.addY(35), "Government Taxes", labelGenericTextNormal)
+	canvas.Text((width - xMargin), b.getY(), "Varies by Location", labelGenericTextNormalHeavyBoldAnchorEnd)
+	canvas.Line(xMargin, b.addY(10), width-xMargin, b.getY(), "stroke:black;stroke-width:3")
 	canvas.Gend()
 }
 
 func (b *BroadbandConsumerLabel) discountsAndBundles(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(25, b.addY(25), "Discounts & Bundles", labelSectionHeading)
-	canvas.Textspan(40, b.addY(25), "", labelGenericTextNormal)
+	canvas.Text(xMargin, b.addY(23), "Discounts & Bundles", labelSectionHeading)
+	canvas.Textspan(xParagraph, b.addY(17), "", labelGenericTextNormal)
 	canvas.Link(template.DiscountsAndBundlesURL, "Click Here")
 	canvas.Span("Click here", "fill:blue")
 	canvas.LinkEnd()
 	canvas.TextEnd()
-	canvas.Text(130, b.getY(), " for available billing discounts and pricing options", labelGenericTextNormal)
-	canvas.Text(40, b.addY(25), "for broadband service bundled with other services like video,", labelGenericTextNormal)
-	canvas.Text(40, b.addY(25), "phone, and wireless service, and use of your own equipment", labelGenericTextNormal)
-	canvas.Text(40, b.addY(25), "like modems and routers.", labelGenericTextNormal)
-	canvas.Line(25, b.addY(10), width-25, b.getY(), "stroke:black;stroke-width:3")
+	canvas.Text(110, b.getY(), "for available billing discounts and pricing", labelGenericTextNormal)
+	canvas.Text(xParagraph, b.addY(17), "options for broadband service bundled with other", labelGenericTextNormal)
+	canvas.Text(xParagraph, b.addY(17), "services like video, phone, and wireless service", labelGenericTextNormal)
+	canvas.Text(xParagraph, b.addY(17), "and use of your own equipment like modems and", labelGenericTextNormal)
+	canvas.Text(xParagraph, b.addY(17), "routers.", labelGenericTextNormal)
+	canvas.Line(xMargin, b.addY(10), width-xMargin, b.getY(), "stroke:black;stroke-width:3")
 	canvas.Gend()
 }
 
 func (b *BroadbandConsumerLabel) participatesInACP(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(25, b.addY(25), "Affordable Connectivity Program (ACP)", labelSectionHeading)
-	canvas.Text(40, b.addY(25), "The ACP is a government program to help lower the monthly", labelGenericTextNormal)
-	canvas.Text(40, b.addY(25), "cost of internet service. To learn more about the ACP, including", labelGenericTextNormal)
-	canvas.Text(40, b.addY(25), "to find out whether you qualify, visit:", labelGenericTextNormal)
-	canvas.Textspan(340, b.getY(), "", labelGenericTextNormal)
+	canvas.Text(xMargin, b.addY(23), "Affordable Connectivity Program (ACP)", labelSectionHeading)
+	canvas.Text(xParagraph, b.addY(17), "The ACP is a government program to help lower the", labelGenericTextNormal)
+	canvas.Text(xParagraph, b.addY(17), "monthly cost of internet service. To learn more", labelGenericTextNormal)
+	canvas.Text(xParagraph, b.addY(17), "about the ACP, including to find out whether you", labelGenericTextNormal)
+	canvas.Text(xParagraph, b.addY(17), "qualify, visit:", labelGenericTextNormal)
+	canvas.Textspan(130, b.getY(), "", labelGenericTextNormal)
 	canvas.Link("https://affordableconnectivity.gov/", "affordableconnectivity.gov")
 	canvas.Span("affordableconnectivity.gov", "fill:blue")
 	canvas.LinkEnd()
@@ -205,26 +215,26 @@ func (b *BroadbandConsumerLabel) participatesInACP(canvas *svg.SVG, thisSectionY
 
 	template.AcpEnabled = strings.ToUpper(template.AcpEnabled)
 	if template.AcpEnabled == "YES" || template.AcpEnabled == "1" || template.AcpEnabled == "TRUE" {
-		canvas.Text(55, b.addY(25), "Participates in the ACP", labelGenericTextNormalBold)
-		canvas.Text((width - 25), b.getY(), "Yes", labelGenericTextNormalHeavyBoldAnchorEnd)
+		canvas.Text(56, b.addY(17), "Participates in the ACP", labelGenericTextNormalBold)
+		canvas.Text((width - xMarginRightIndentHard), b.getY(), "Yes", labelGenericTextNormalHeavyBoldAnchorStart)
 	} else {
-		canvas.Text(55, b.addY(25), "Participates in the ACP", labelGenericTextNormalBold)
-		canvas.Text((width - 25), b.getY(), "No", labelGenericTextNormalHeavyBoldAnchorEnd)
+		canvas.Text(56, b.addY(17), "Participates in the ACP", labelGenericTextNormalBold)
+		canvas.Text((width - xMarginRightIndentHard), b.getY(), "No", labelGenericTextNormalHeavyBoldAnchorStart)
 	}
-	canvas.Line(25, b.addY(10), width-25, b.getY(), "stroke:black;stroke-width:3")
+	canvas.Line(xMargin, b.addY(10), width-xMargin, b.getY(), "stroke:black;stroke-width:3")
 	canvas.Gend()
 }
 
 func (b *BroadbandConsumerLabel) planSpeeds(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(25, b.addY(25), "Plan Speeds", labelSectionHeading)
-	canvas.Text(40, b.addY(25), "Typical Download Speed", labelGenericTextNormal)
-	canvas.Text((width - 25), b.getY(), template.CalculatedDLSpeedInMbps+" Mbps", labelGenericTextNormalHeavyBoldAnchorEnd)
-	canvas.Text(40, b.addY(25), "Typical Upload Speed", labelGenericTextNormal)
-	canvas.Text((width - 25), b.getY(), template.CalculatedULSpeedInMbps+" Mbps", labelGenericTextNormalHeavyBoldAnchorEnd)
-	canvas.Text(40, b.addY(25), "Typical Latency", labelGenericTextNormal)
-	canvas.Text((width - 25), b.getY(), template.LatencyInMs+" ms", labelGenericTextNormalHeavyBoldAnchorEnd)
-	canvas.Line(25, b.addY(10), width-25, b.getY(), "stroke:black;stroke-width:3")
+	canvas.Text(xMargin, b.addY(23), "Plan Speeds", labelSectionHeading)
+	canvas.Text(xIndent, b.addY(17), "Typical Download Speed", labelGenericTextNormal)
+	canvas.Text((width - xMarginRightIndentHard), b.getY(), template.CalculatedDLSpeedInMbps+" Mbps", labelGenericTextNormalHeavyBoldAnchorStart)
+	canvas.Text(xIndent, b.addY(17), "Typical Upload Speed", labelGenericTextNormal)
+	canvas.Text((width - xMarginRightIndentHard), b.getY(), template.CalculatedULSpeedInMbps+" Mbps", labelGenericTextNormalHeavyBoldAnchorStart)
+	canvas.Text(xIndent, b.addY(17), "Typical Latency", labelGenericTextNormal)
+	canvas.Text((width - xMarginRightIndentHard), b.getY(), template.LatencyInMs+" ms", labelGenericTextNormalHeavyBoldAnchorStart)
+	canvas.Line(xMargin, b.addY(10), width-xMargin, b.getY(), "stroke:black;stroke-width:3")
 	canvas.Gend()
 
 }
@@ -232,62 +242,66 @@ func (b *BroadbandConsumerLabel) planSpeeds(canvas *svg.SVG, thisSectionYStart i
 func (b *BroadbandConsumerLabel) dataIncluded(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
 	if template.DataIncludedInMonthlyPriceGB != "" {
-		canvas.Text(25, b.addY(25), "Data Included with Monthly Price", labelSectionHeading)
-		canvas.Text((width - 25), b.getY(), template.DataIncludedInMonthlyPriceGB+" GB", labelGenericTextNormalBoldAnchorEnd)
-		canvas.Text(40, b.addY(25), "Charges for Additional Data Usage", labelGenericTextNormal)
-		template.OverageFee = strings.TrimPrefix(template.OverageFee, "$")
-		canvas.Text((width - 25), b.getY(), "$"+template.OverageFee+"/"+template.OverageDataAmount+"GB", labelGenericTextNormalHeavyBoldAnchorEnd)
+		canvas.Text(xMargin, b.addY(23), "Data Included with Monthly Price", labelSectionHeading)
+		canvas.Text((width - xMarginRightIndentHard), b.getY(), template.DataIncludedInMonthlyPriceGB+" GB", labelGenericTextNormalHeavyBoldAnchorStart)
+		canvas.Text(xIndent, b.addY(17), "Charges for Additional Data Usage", labelGenericTextNormal)
+		if template.OverageFee == "" {
+			canvas.Text((width - xMarginRightIndentHard), b.getY(), "None", labelGenericTextNormalHeavyBoldAnchorStart)
+		} else {
+			template.OverageFee = strings.TrimPrefix(template.OverageFee, "$")
+			canvas.Text((width - xMarginRightIndentHard), b.getY(), "$"+template.OverageFee+"/"+template.OverageDataAmount+"GB", labelGenericTextNormalHeavyBoldAnchorStart)
+		}
 	} else {
-		canvas.Text(25, b.addY(25), "Data Included with Monthly Price", labelSectionHeading)
-		canvas.Text((width - 25), b.getY(), "Unlimited", labelGenericTextNormalBoldAnchorEnd)
-		canvas.Text(40, b.addY(25), "Charges for Additional Data Usage", labelGenericTextNormal)
-		canvas.Text((width - 25), b.getY(), "None", labelGenericTextNormalHeavyBoldAnchorEnd)
+		canvas.Text(xMargin, b.addY(23), "Data Included with Monthly Price", labelSectionHeading)
+		canvas.Text((width - xMarginRightIndentHard), b.getY(), "Unlimited", labelGenericTextNormalHeavyBoldAnchorStart)
+		canvas.Text(xIndent, b.addY(17), "Charges for Additional Data Usage", labelGenericTextNormal)
+		canvas.Text((width - xMarginRightIndentHard), b.getY(), "None", labelGenericTextNormalHeavyBoldAnchorStart)
 	}
-	canvas.Line(25, b.addY(10), width-25, b.getY(), "stroke:black;stroke-width:3")
+	canvas.Line(xMargin, b.addY(10), width-xMargin, b.getY(), "stroke:black;stroke-width:3")
 	canvas.Gend()
 }
 
 func (b *BroadbandConsumerLabel) policies(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(25, b.addY(25), "Network Management", labelSectionHeading)
-	canvas.Textspan(width-25, b.getY(), "", labelGenericTextNormalBoldAnchorEnd)
+	canvas.Text(xMargin, b.addY(23), "Network Management", labelSectionHeading)
+	canvas.Textspan(width-xMargin, b.getY(), "", labelGenericTextNormalBoldAnchorEnd)
 	canvas.Link(template.NetworkManagementURL, template.NetworkManagementURL)
 	canvas.Span("Read our Policy", "fill:blue")
 	canvas.LinkEnd()
 	canvas.TextEnd()
 
-	canvas.Text(25, b.addY(25), "Privacy", labelSectionHeading)
-	canvas.Textspan(width-25, b.getY(), "", labelGenericTextNormalBoldAnchorEnd)
+	canvas.Text(xMargin, b.addY(17), "Privacy", labelSectionHeading)
+	canvas.Textspan(width-xMargin, b.getY(), "", labelGenericTextNormalBoldAnchorEnd)
 	canvas.Link(template.PrivacyPolicyURL, template.PrivacyPolicyURL)
 	canvas.Span("Read our Policy", "fill:blue")
 	canvas.LinkEnd()
 	canvas.TextEnd()
-	canvas.Line(25, b.addY(15), width-25, b.getY(), "stroke:black;stroke-width:12")
+	canvas.Line(xMargin, b.addY(15), width-xMargin, b.getY(), "stroke:black;stroke-width:12")
 	canvas.Gend()
 }
 
 func (b *BroadbandConsumerLabel) customerSupport(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(25, b.addY(25), "Customer Support", labelSectionHeading)
+	canvas.Text(xMargin, b.addY(25), "Customer Support", labelSectionHeading)
 
-	canvas.Text(40, b.addY(25), "Contact Us:", labelGenericTextNormal)
-	canvas.Textspan(width-390, b.getY(), "", labelGenericTextNormal)
+	canvas.Text(xIndent, b.addY(17), "Contact Us:", labelGenericTextNormal)
+	canvas.Textspan(width-310, b.getY(), "", labelGenericTextNormal)
 	canvas.Link(template.CustomerSupportURL, template.CustomerSupportURL)
 	canvas.Span("Contact Us", "fill:blue")
 	canvas.LinkEnd()
 	canvas.TextEnd()
-	canvas.Text(width-240, b.getY(), "/ "+template.CustomerSupportPhone, labelGenericTextNormal)
-	canvas.Line(25, b.addY(15), width-25, b.getY(), "stroke:black;stroke-width:6")
+	canvas.Text(width-220, b.getY(), "/ "+template.CustomerSupportPhone, labelGenericTextNormal)
+	canvas.Line(xMargin, b.addY(15), width-xMargin, b.getY(), "stroke:black;stroke-width:6")
 	canvas.Gend()
 }
 
 func (b *BroadbandConsumerLabel) fccLabelTerms(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(25, b.addY(25), "Learn more about the terms used on this label by visiting the", labelGenericTextNormal)
-	canvas.Text(25, b.addY(25), "Federal Communications Commission's Consumer Resource", labelGenericTextNormal)
-	canvas.Text(25, b.addY(25), " Center.", labelGenericTextNormal)
+	canvas.Text(xMargin, b.addY(17), "Learn more about the terms used on this label by", labelGenericTextNormal)
+	canvas.Text(xMargin, b.addY(17), "visiting the Federal Communications Commission's", labelGenericTextNormal)
+	canvas.Text(xMargin, b.addY(17), "Consumer Resource Center.", labelGenericTextNormal)
 
-	canvas.Textspan(width-25, b.addY(25), "", labelFccLink)
+	canvas.Textspan(width-xMargin, b.addY(17), "", labelFccLink)
 	canvas.Link("https://fcc.gov/consumer", "https://fcc.gov/consumer")
 	canvas.Span("fcc.gov/consumer", "fill:blue")
 	canvas.LinkEnd()
@@ -306,20 +320,17 @@ func (b *BroadbandConsumerLabel) uniquePlanIdentifier(canvas *svg.SVG, thisSecti
 	serviceId := strings.Repeat("0", 15-len(template.DataServiceID)) + template.DataServiceID
 	uniquePlanIdentifier := FixedMobile + template.FccID + serviceId
 
-	canvas.Text(25, b.addY(25), uniquePlanIdentifier, labelUniquePlanId)
+	canvas.Text(xMargin, b.addY(17), uniquePlanIdentifier, labelUniquePlanId)
+	canvas.Line(xMargin, b.addY(15), width-xMargin, b.getY(), "stroke:white;stroke-width:6")
 	canvas.Gend()
 }
 
-var resizeJsScript = `
-    window.addEventListener('load', function() {
-	    var contentGroup = document.getElementById('content-group');
-	    var bbox = contentGroup.getBBox();
-	    var svg = document.getElementById('bcd');
-	    svg.setAttribute('height', bbox.height);
-	    var vBox = "0 0 " + bbox.width + " " + bbox.height;
-	    svg.setAttribute('viewBox', vBox);
-    });
-`
+var svgStartTag = `
+<svg
+     id="bcd"
+     viewBox="{{ .TemplateViewBox }}"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">`
 
 func generateLabels(templateData []BroadbandData) error {
 
@@ -332,21 +343,22 @@ func generateLabels(templateData []BroadbandData) error {
 		}
 		defer templateFile.Close()
 
-		templateWriter := io.Writer(templateFile)
+		templateWriter := &TemplateWriter{}
 
 		canvas := svg.New(templateWriter)
-		canvas.Startpercent(100, 100, "id=\"bcd\"", "viewBox=\"0 0 431 972\"")
-		canvas.Gid("content-group")
+		//canvas.Start(431, 972, "id=\"bcd\"", "viewBox=\"0 0 431 972\"")
+		fmt.Fprintln(templateWriter, svgStartTag)
+
 		setTemplateStyles(canvas)
 		fontList := "Roboto"
-		canvas.Script("application/javascript", resizeJsScript)
 
 		var label BroadbandConsumerLabel
 
-		fmt.Fprintln(templateWriter, `<rect x="0" y="0" width="605" height="100%" style="fill:white" />`)
-		fmt.Fprintln(templateWriter, `<rect x="5" y="5" width="595" height="99.5%" style="fill:none;stroke:black;stroke-width:3" />`)
+		canvas.Gid("content-group")
+		fmt.Fprintln(templateWriter, `<rect width="431" height="942" style="fill:white" />`)
+		fmt.Fprintln(templateWriter, `<rect x="4.5" y="7.5" width="419" height="{{ .CalcYRectHeight }}" style="fill:none;stroke:black;stroke-width:3" />`)
 
-		label.labelTitle(canvas, 0, "Broadband Facts", fontList)
+		label.labelTitle(canvas, 0)
 		label.providerBlock(canvas, 0, template, fontList)
 		label.monthlyPrice(canvas, 0, template, fontList)
 		label.monthlyDetails(canvas, 0, template, fontList)
@@ -361,6 +373,41 @@ func generateLabels(templateData []BroadbandData) error {
 		label.uniquePlanIdentifier(canvas, 0, template, fontList)
 		canvas.Gend()
 		canvas.End()
+
+		// bake the viewbox
+
+		templateWriter.ApplyDynamicCalculations(label.getY())
+
+		// write the contents of templateWriter to the templateFile
+		for _, v := range templateWriter.bcdTemplate {
+			fmt.Fprintln(templateFile, v)
+		}
+
 	}
 	return nil
+}
+
+// TemplateWriter is a custom io.Writer that appends data to a []string.
+type TemplateWriter struct {
+	bcdTemplate []string
+}
+
+func (w *TemplateWriter) Write(p []byte) (n int, err error) {
+	w.bcdTemplate = append(w.bcdTemplate, string(p))
+	return len(p), nil
+}
+
+func (w *TemplateWriter) ApplyDynamicCalculations(y int) {
+	for i, v := range w.bcdTemplate {
+		if strings.Contains(v, "{{ .TemplateViewBox }}") {
+			viewBox := "0 0 431 " + strconv.Itoa(y)
+			w.bcdTemplate[i] = strings.ReplaceAll(v, "{{ .TemplateViewBox }}", viewBox)
+		}
+		if strings.Contains(v, "{{ .CalcYRectHeight }}") {
+			rectHeight := strconv.Itoa(y - 13)
+			w.bcdTemplate[i] = strings.ReplaceAll(v, "{{ .CalcYRectHeight }}", rectHeight)
+		}
+
+	}
+
 }

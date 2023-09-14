@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"strconv"
 	"testing"
 )
 
@@ -87,51 +88,68 @@ func TestCalculateMonthlyPrice(t *testing.T) {
 	}
 }
 
+func TestIsSpeedAnInteger(t *testing.T) {
+	tests := []struct {
+		speed     float64
+		isInteger bool
+	}{
+		{100.00, true},    // Integer, should return true
+		{100.5, false},    // Float, should return false
+		{0.0, true},       // Zero, should return true
+		{-10.5, false},    // Negative float, should return false
+		{-20.0, true},     // Negative integer, should return true
+		{999999999, true}, // Very large integer, should return true
+	}
+
+	for _, test := range tests {
+		t.Run(strconv.FormatFloat(test.speed, 'f', -1, 64), func(t *testing.T) {
+			result := isSpeedAnInteger(test.speed)
+			if result != test.isInteger {
+				t.Errorf("isSpeedAnInteger(%f) = %v; want %v", test.speed, result, test.isInteger)
+			}
+		})
+	}
+}
+
 func TestCalculateUploadDownloadSpeeds(t *testing.T) {
 	tests := []struct {
 		description     string
 		templateEntry   BroadbandData
-		uldlAreInMbps   bool
 		expectedULSpeed string
 		expectedDLSpeed string
 		expectedError   bool
 	}{
 		{
-			description:     "Test with uldlAreInMbps=true",
-			templateEntry:   BroadbandData{ULSpeedInKbps: "10", DLSpeedInKbps: "20"},
-			uldlAreInMbps:   true,
-			expectedULSpeed: "10.00",
-			expectedDLSpeed: "20.00",
+			description:     "Test ULSpeedInKbps and DLSpeedInKbps conversion exact decimal to integer",
+			templateEntry:   BroadbandData{ULSpeedInKbps: "10.0", DLSpeedInKbps: "20.0"},
+			expectedULSpeed: "10",
+			expectedDLSpeed: "20",
 			expectedError:   false,
 		},
 		{
-			description:     "Test with uldlAreInMbps=false",
+			description:     "Test with integer ULSpeedInKbps and DLSpeedInKbps speeds (Kbps, no conversion)",
 			templateEntry:   BroadbandData{ULSpeedInKbps: "10000", DLSpeedInKbps: "20000"},
-			uldlAreInMbps:   false,
-			expectedULSpeed: "10.00",
-			expectedDLSpeed: "20.00",
+			expectedULSpeed: "10",
+			expectedDLSpeed: "20",
 			expectedError:   false,
 		},
 		{
-			description:     "Test with uldlAreInMbps=true, non-numeric ULSpeedInKbps",
+			description:     "Test with non-numeric ULSpeedInKbps",
 			templateEntry:   BroadbandData{ULSpeedInKbps: "not a number", DLSpeedInKbps: "20000"},
-			uldlAreInMbps:   true,
 			expectedULSpeed: "",
 			expectedDLSpeed: "",
 			expectedError:   true,
 		},
 		{
-			description:     "Test with uldlAreInMbps=false, non-numeric DLSpeedInKbps",
+			description:     "Test with non-numeric DLSpeedInKbps",
 			templateEntry:   BroadbandData{ULSpeedInKbps: "10000", DLSpeedInKbps: "not a number"},
-			uldlAreInMbps:   false,
 			expectedULSpeed: "",
 			expectedDLSpeed: "",
 			expectedError:   true,
 		},
 		{
-			description:     "Test with uldlAreInMbps=true, empty strings",
+			description:     "Test with empty strings",
 			templateEntry:   BroadbandData{ULSpeedInKbps: "", DLSpeedInKbps: ""},
-			uldlAreInMbps:   true,
 			expectedULSpeed: "",
 			expectedDLSpeed: "",
 			expectedError:   true,
@@ -139,48 +157,57 @@ func TestCalculateUploadDownloadSpeeds(t *testing.T) {
 		{
 			description:     "Test with uldlAreInMbps=false, empty strings",
 			templateEntry:   BroadbandData{ULSpeedInKbps: "", DLSpeedInKbps: ""},
-			uldlAreInMbps:   false,
 			expectedULSpeed: "",
 			expectedDLSpeed: "",
 			expectedError:   true,
 		},
 		{
-			description:     "Test with uldlAreInMbps=true, valid values at lower boundary",
+			description:     "Test with valid values at lower boundary (integer)",
 			templateEntry:   BroadbandData{ULSpeedInKbps: "0", DLSpeedInKbps: "0"},
-			uldlAreInMbps:   true,
-			expectedULSpeed: "0.00",
-			expectedDLSpeed: "0.00",
+			expectedULSpeed: "0",
+			expectedDLSpeed: "0",
 			expectedError:   false,
 		},
 		{
-			description:     "Test with uldlAreInMbps=false, valid values at lower boundary",
-			templateEntry:   BroadbandData{ULSpeedInKbps: "0", DLSpeedInKbps: "0"},
-			uldlAreInMbps:   false,
-			expectedULSpeed: "0.00",
-			expectedDLSpeed: "0.00",
+			description:     "Test with valid values at lower boundary (decimal)",
+			templateEntry:   BroadbandData{ULSpeedInKbps: "0.00", DLSpeedInKbps: "0.00"},
+			expectedULSpeed: "0",
+			expectedDLSpeed: "0",
 			expectedError:   false,
 		},
 		{
-			description:     "Test with uldlAreInMbps=true, valid values at upper boundary",
-			templateEntry:   BroadbandData{ULSpeedInKbps: "10000", DLSpeedInKbps: "10000.00"},
-			uldlAreInMbps:   true,
-			expectedULSpeed: "10000.00",
-			expectedDLSpeed: "10000.00",
+			description:     "Test with valid values at upper boundary (decimal)",
+			templateEntry:   BroadbandData{ULSpeedInKbps: "10000.00", DLSpeedInKbps: "10000.00"},
+			expectedULSpeed: "10000",
+			expectedDLSpeed: "10000",
 			expectedError:   false,
 		},
 		{
-			description:     "Test with uldlAreInMbps=false, valid values at upper boundary",
+			description:     "Test with valid values at upper boundary (integer)",
 			templateEntry:   BroadbandData{ULSpeedInKbps: "10000000", DLSpeedInKbps: "10000000"},
-			uldlAreInMbps:   false,
-			expectedULSpeed: "10000.00",
-			expectedDLSpeed: "10000.00",
+			expectedULSpeed: "10000",
+			expectedDLSpeed: "10000",
+			expectedError:   false,
+		},
+		{
+			description:     "Test integer to decimal conversion test",
+			templateEntry:   BroadbandData{ULSpeedInKbps: "1500", DLSpeedInKbps: "1500"},
+			expectedULSpeed: "1.5",
+			expectedDLSpeed: "1.5",
+			expectedError:   false,
+		},
+		{
+			description:     "Test decimal precision conversion",
+			templateEntry:   BroadbandData{ULSpeedInKbps: "1.500", DLSpeedInKbps: "1.500"},
+			expectedULSpeed: "1.5",
+			expectedDLSpeed: "1.5",
 			expectedError:   false,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.description, func(t *testing.T) {
-			err := calculateUploadDownloadSpeeds(&test.templateEntry, &test.uldlAreInMbps)
+			err := calculateUploadDownloadSpeeds(&test.templateEntry)
 
 			if test.expectedError && err == nil {
 				t.Errorf("Expected an error but got none")

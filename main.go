@@ -61,12 +61,11 @@ var outputDirectory string
 func main() {
 	flag.StringVar(&csvFileName, "inputcsv", "bcd.csv", "the name of the csv file to convert")
 	flag.StringVar(&outputDirectory, "outputdir", "./generated-labels", "the name of the directory to output the generated files to")
-	uldlAreInMbps := flag.Bool("uldlmbps", false, "interpret ul_speed_in_kbps and dl_speed_in_kbps field in the csv file as Mbps not Kbps (no conversions will be done)")
 	checkCsv := flag.Bool("checkcsv", false, "check the csv file for errors (basic checks)")
 	flag.Parse()
 
 	if *checkCsv {
-		err := checkCsvRecords(uldlAreInMbps)
+		err := checkCsvRecords()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -74,8 +73,12 @@ func main() {
 	}
 
 	if _, err := os.Stat(outputDirectory); os.IsNotExist(err) {
-		fmt.Println("error:", err)
-		return
+		// create the directory
+		err := os.Mkdir(outputDirectory, 0755)
+		if err != nil {
+			fmt.Println("error:", err)
+			return
+		}
 	}
 
 	if _, err := os.Stat(csvFileName); os.IsNotExist(err) {
@@ -130,7 +133,7 @@ func main() {
 			OverageDataAmount:            data["overage_data_amount"],
 		}
 
-		err := calculateUploadDownloadSpeeds(&templateEntry, uldlAreInMbps)
+		err := calculateUploadDownloadSpeeds(&templateEntry)
 		if err != nil {
 			fmt.Println("error:", err)
 			return

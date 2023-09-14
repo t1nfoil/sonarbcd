@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func checkCsvRecords(uldlAreInMbps *bool) error {
+func checkCsvRecords() error {
 	records, err := loadCSV(csvFileName)
 	if err != nil {
 		return err
@@ -22,7 +22,7 @@ func checkCsvRecords(uldlAreInMbps *bool) error {
 		data["csvrow"] = strconv.Itoa(recordNumber + 2)
 		validateIntroductoryFields(data)
 		validateDataServicePrice(data)
-		validateSpeeds(data, *uldlAreInMbps)
+		validateSpeeds(data)
 	}
 
 	return nil
@@ -81,38 +81,58 @@ func validateDataServicePrice(data map[string]string) {
 	}
 }
 
-func validateSpeeds(data map[string]string, uldlAreInMbps bool) {
+func validateSpeeds(data map[string]string) {
 	dlSpeed, dlExists := data["dl_speed_in_kbps"]
 	ulSpeed, ulExists := data["ul_speed_in_kbps"]
 
-	if dlExists && ulExists && !uldlAreInMbps {
+	if dlExists && strings.Contains(dlSpeed, ".") {
+		dlSpeedValue, dlErr := strconv.ParseFloat(fmt.Sprintf("%v", dlSpeed), 64)
+		if dlErr != nil {
+			fmt.Println("error: dl_speed_in_kbps values must be a valid decimal value to be interpreted as Mpbs, row", data["csvrow"])
+			return
+		}
+
+		if dlSpeedValue < 0 || dlSpeedValue > 10000 {
+			fmt.Println("error: dl_speed_in_kbps values must be between 0.00 and 10000.00, row ", data["csvrow"])
+			return
+		}
+
+	} else {
 		dlSpeedValue, dlErr := strconv.ParseInt(fmt.Sprintf("%v", dlSpeed), 10, 64)
+
+		if dlErr != nil {
+			fmt.Println("error: dl_speed_in_kbps values must be a valid integer (Kbps), row ", data["csvrow"])
+			return
+		}
+		if dlSpeedValue < 0 || dlSpeedValue > 10000000 {
+			fmt.Println("error: dl_speed_in_kbps values must be between 0 and 10000000, row ", data["csvrow"])
+			return
+		}
+
+	}
+
+	if ulExists && strings.Contains(ulSpeed, ".") {
+		ulSpeedValue, ulErr := strconv.ParseFloat(fmt.Sprintf("%v", ulSpeed), 64)
+		if ulErr != nil {
+			fmt.Println("error: ul_speed_in_kbps values must be a valid decimal value to be interpreted as Mpbs, row ", data["csvrow"])
+			return
+		}
+
+		if ulSpeedValue < 0 || ulSpeedValue > 10000 {
+			fmt.Println("error: ul_speed_in_kbps values must be between 0.00 and 10000.00, row ", data["csvrow"])
+			return
+		}
+
+	} else {
 		ulSpeedValue, ulErr := strconv.ParseInt(fmt.Sprintf("%v", ulSpeed), 10, 64)
 
-		if dlErr != nil || ulErr != nil {
-			fmt.Println("Error: Speed values must be valid integers, row ", data["csvrow"])
+		if ulErr != nil {
+			fmt.Println("error: ul_speed_in_kbps values must be valid integer (Kbps), row ", data["csvrow"])
 			return
 		}
 
-		if dlSpeedValue < 0 || dlSpeedValue > 10000000 || ulSpeedValue < 0 || ulSpeedValue > 10000000 {
-			fmt.Println("Error: Speed values must be between 0 and 10000000, row ", data["csvrow"])
-			return
-		}
-	} else {
-		dlSpeedValue, dlErr := strconv.ParseFloat(fmt.Sprintf("%v", dlSpeed), 64)
-		ulSpeedValue, ulErr := strconv.ParseFloat(fmt.Sprintf("%v", ulSpeed), 64)
-		if dlErr != nil || ulErr != nil {
-			fmt.Println("Error: Speed values must be valid integers or decimal values, when using -uldlmbps flag, row ", data["csvrow"])
-			return
-		}
-
-		if dlSpeedValue < 0 || dlSpeedValue > 10000 || ulSpeedValue < 0 || ulSpeedValue > 10000 {
-			fmt.Println("Error: Speed values must be between 0.00 and 10000, row ", data["csvrow"])
-			return
-		}
-
-		if dlSpeedValue < 0 || dlSpeedValue > 10000 || ulSpeedValue < 0 || ulSpeedValue > 10000 {
-			fmt.Println("Error: Speed values must be between 0 and 10000, row ", data["csvrow"])
+		if ulSpeedValue < 0 || ulSpeedValue > 10000000 {
+			fmt.Println("error: ul_speed_in_kbps values must be between 0 and 10000000, row ", data["csvrow"])
 			return
 		}
 	}

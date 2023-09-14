@@ -14,11 +14,7 @@ To get started with sonarbcd repository, follow these steps to clone it to your 
    - These are located in the binaries/ folder off of the repository root.
    - sonarbcd.exe -> Windows
    - sonarbcd_linux -> Linux
-     
-5. **Install golang if building from source (Optional)**
-   - Download your appropriate version for your OS from [https://go.dev/dl/](the golang website).
-   - Then in the `sonarbcd` repo directory, run `go build` to generate the `sonarbcd` binary.
-  
+    
 
 
 ## sonarbcd Usage ##
@@ -31,8 +27,6 @@ The program accepts several command-line flags to customize its behavior:
 
 - **-outputdir**: Specifies the directory to output the generated files. Default is `./generated-labels`.
 
-- **-uldlmbps**: When set, interprets `ul_speed_in_kbps` and `dl_speed_in_kbps` as Mbps instead of Kbps. No conversions will be done.
-
 - **-checkcsv**: When set, performs basic checks on the CSV file for errors.
 
 ### Usage Example ###
@@ -43,9 +37,6 @@ $ sonarbcd.exe -inputcsv=mydata.csv
 
 # Output to a specific directory
 $ sonarbcd.exe -outputdir=./output
-
-# Interpret speeds in Mbps
-$ sonarbcd.exe -uldlmbps
 
 # Perform basic checks on the CSV file
 $ sonarbcd.exe -checkcsv
@@ -113,12 +104,14 @@ $ sonarbcd.exe -checkcsv
     - Format: Price (e.g., $###.###), eg: $100.00
 
 19. **dl_speed_in_kbps:** 
-    - Format: Integer, eg: 100000, or if using -uldlmpbs: 100.00
-    - Notes: Use integers. If using the `-uldlmbps` flag, decimals are also accepted.
+    - Format: Integer, eg: 100000, interpreted as Kbps and will be converted to Mbps with 1 place decimal precision (eg: 1.5 Mbps not 1.50 Mbps)
+    - Format: Decimal, eg: 1.5, interpreted as Mbps and will be converted to 1 place decimal precision.
+    - Notes: Any decimals ending in .0 are converted to whole numbers (eg: 100.0 Mbps is displayed as 100 Mbps)
 
 20. **ul_speed_in_kbps:** 
-    - Format: Integer, eg: 100000, or if using -uldlmpbs: 100.00
-    - Notes: Use integers. If using the `-uldlmbps` flag, decimals are also accepted.
+    - Format: Integer, eg: 100000, interpreted as Kbps and will be converted to Mbps with 1 place decimal precision (eg: 1.5 Mbps not 1.50 Mbps)
+    - Format: Decimal, eg: 1.5, interpreted as Mbps and will be converted to 1 place decimal precision.
+    - Notes: Any decimals ending in .0 are converted to whole numbers (eg: 100.0 Mbps is displayed as 100 Mbps)
 
 21. **latency_in_ms:** 
     - Format: Integer (Milliseconds), eg: 120
@@ -151,12 +144,9 @@ The application performs several checks on the provided data to ensure its integ
 
 3. **Download and Upload Speeds:**
    - Verifies if `dl_speed_in_kbps` and `ul_speed_in_kbps` are present in the data.
-   - Checks if `uldlAreInMbps` is set to `false` for the validation to be performed.
-   - If `uldlAreInMbps` is `false`:
       - Ensures that `dl_speed_in_kbps` and `ul_speed_in_kbps` can be successfully parsed as integers.
+      - Ensures that `dl_speed_in_kbps` and `ul_speed_in_kbps` can be successfully parsed as floating point.
       - Validates that the values are integers within the range of 0 to 10,000,000.
-   - If `uldlAreInMbps` is `true`:
-      - Ensures that `dl_speed_in_kbps` and `ul_speed_in_kbps` can be successfully parsed as floating-point numbers.
       - Validates that the values are within the range of 0.00 to 10000.
 
 Any errors encountered during these checks will be printed to the console, along with the corresponding row information from the CSV file.
