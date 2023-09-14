@@ -95,19 +95,9 @@ func main() {
 
 	header := records[0]
 
-	for row, record := range records[1:] {
+	for _, record := range records[1:] {
 		data := make(map[string]string)
 		for i, value := range record {
-			if len(value) > 36 &&
-				header[i] != "discounts_and_bundles_url" &&
-				header[i] != "customer_support_url" &&
-				header[i] != "privacy_policy_url" &&
-				header[i] != "contract_url" {
-				logger.Fatalln(convertErrorToJSON(strconv.Itoa(row+2), " value too long for field (greater than 30 characters)", header[i]))
-			}
-			if len(value) > 256 {
-				logger.Fatalln(convertErrorToJSON(strconv.Itoa(row+2), " value too long for field (greater than 256 characters)", header[i]))
-			}
 			data[header[i]] = value
 		}
 		broadbandData = append(broadbandData, data)
@@ -169,17 +159,17 @@ func main() {
 							if fieldValue != "" {
 								indexStr := strconv.Itoa(indexNumber)
 								if _, ok := data[extraFieldType+indexStr]; !ok {
-									logger.Fatalln("NA", convertErrorToJSON(" missing associated field for", fieldName))
+									logger.Fatalln("NA", convertErrorToJSON("error: missing associated field for", fieldName))
 									continue
 								}
 
 								if data[extraFieldType+indexStr] == "" {
-									logger.Fatalln("NA", convertErrorToJSON(" empty value for", fieldName))
+									logger.Fatalln("NA", convertErrorToJSON("error: empty value for", fieldName))
 									continue
 								}
 
-								if len(fieldValue) > 36 {
-									fieldValue = fieldValue[:33] + "..."
+								if len(fieldValue) > 42 {
+									fieldValue = fieldValue[:39] + "..."
 								}
 
 								e := AdditionalCharges{

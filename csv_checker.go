@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -21,7 +20,13 @@ func checkCsvRecords() error {
 			data[header[i]] = value
 		}
 		data["csvrow"] = strconv.Itoa(recordNumber + 2)
-		err := validateIntroductoryFields(data)
+
+		err := validateFieldLengths(data)
+		if err != nil {
+			return err
+		}
+
+		err = validateIntroductoryFields(data)
 		if err != nil {
 			return err
 		}
@@ -40,6 +45,21 @@ func checkCsvRecords() error {
 	return nil
 }
 
+func validateFieldLengths(data map[string]string) error {
+	for key, value := range data {
+		if strings.Contains(key, "_url") && len(value) > 256 {
+			return convertErrorToJSON(data["csvrow"], "CSV: ", key, " must be less than 256 characters in length")
+		}
+	}
+
+	for key, value := range data {
+		if !strings.Contains(key, "_url") && len(value) > 36 {
+			return convertErrorToJSON(data["csvrow"], "CSV: ", key, " must be less than 36 characters in length")
+		}
+	}
+	return nil
+}
+
 func validateIntroductoryFields(data map[string]string) error {
 	introductoryPeriod := data["introductory_period_in_months"]
 	introductoryPrice := data["introductory_price_per_month"]
@@ -50,19 +70,19 @@ func validateIntroductoryFields(data map[string]string) error {
 		}
 
 		if _, err := strconv.Atoi(fmt.Sprintf("%v", introductoryPeriod)); err != nil {
-			return convertErrorToJSON(data["csvrow"], "CSV: Introductory period must be a valid integer")
+			return convertErrorToJSON(data["csvrow"], "CSV: Introductory period must be a valid integer, csv value:", introductoryPeriod)
 		}
 
 		price := fmt.Sprintf("%v", introductoryPrice)
 		if match, _ := regexp.MatchString(`^\$?\d{1,3}(\.\d{1,2})?$`, price); !match || len(price) > 8 {
-			return convertErrorToJSON(data["csvrow"], "CSV: Introductory price format should be [$]###.##, row")
+			return convertErrorToJSON(data["csvrow"], "CSV: Introductory price format should be [$]###.##, csv value:", price)
 		}
 
 		priceValue, err := strconv.ParseFloat(strings.TrimLeft(price, "$"), 64)
 		if err != nil {
-			return convertErrorToJSON(data["csvrow"], "CSV: Introductory price could not be converted to float64, row")
+			return convertErrorToJSON(data["csvrow"], "CSV: Introductory price could not be converted to float64, csv value:", strconv.FormatFloat(priceValue, 'f', -1, 64))
 		} else if priceValue != float64(int64(priceValue*100))/100 {
-			return convertErrorToJSON(data["csvrow"], "CSV: Introductory price must have 2 decimal precision, row")
+			return convertErrorToJSON(data["csvrow"], "CSV: Introductory price must have 2 decimal precision, csv value:", strconv.FormatFloat(priceValue, 'f', -1, 64))
 		}
 	}
 	return nil
@@ -74,15 +94,15 @@ func validateDataServicePrice(data map[string]string) error {
 	if exists {
 		price := fmt.Sprintf("%v", dataServicePrice)
 		if match, _ := regexp.MatchString(`^\$?\d{1,3}(\.\d{3})*(\.\d{1,3})?$`, price); !match || len(price) > 8 {
-			return convertErrorToJSON(data["csvrow"], "CSV: Data service price format should be [$]###.###, row")
+			return convertErrorToJSON(data["csvrow"], "CSV: Data service price format should be [$]###.###, csv value:", price)
 		}
 
 		priceValue, err := strconv.ParseFloat(strings.TrimLeft(price, "$"), 64)
 		if err != nil {
-			return convertErrorToJSON(data["csvrow"], "CSV: Data service price could not be converted to float64, row")
+			return convertErrorToJSON(data["csvrow"], "CSV: Data service price could not be converted to float64, csv value:", strconv.FormatFloat(priceValue, 'f', -1, 64))
 
 		} else if priceValue != float64(int64(priceValue*1000))/1000 {
-			return convertErrorToJSON(data["csvrow"], "CSV: Data service price must have 3 decimal precision, row")
+			return convertErrorToJSON(data["csvrow"], "CSV: Data service price must have 3 decimal precision, csv value:", strconv.FormatFloat(priceValue, 'f', -1, 64))
 		}
 	}
 	return nil
@@ -95,21 +115,21 @@ func validateSpeeds(data map[string]string) error {
 	if dlExists && strings.Contains(dlSpeed, ".") {
 		dlSpeedValue, dlErr := strconv.ParseFloat(fmt.Sprintf("%v", dlSpeed), 64)
 		if dlErr != nil {
-			return errors.New(" dl_speed_in_kbps values must be a valid decimal value to be interpreted as Mpbs, row" + data["csvrow"])
+			return convertErrorToJSON(data["csvrow"], "CSV: dl_speed_in_kbps values must be a valid decimal value to be interpreted as Mbps, csv value:", strconv.Itoa(int(dlSpeedValue)))
 		}
 
 		if dlSpeedValue < 0 || dlSpeedValue > 10000 {
-			return errors.New(" dl_speed_in_kbps values must be between 0.00 and 10000.00, row")
+			return convertErrorToJSON(data["csvrow"], "CSV: dl_speed_in_kbps values must be between 0.00 and 10000.00 to be interpreted as Mbps, csv value:", strconv.Itoa(int(dlSpeedValue)))
 		}
 
 	} else {
 		dlSpeedValue, dlErr := strconv.ParseInt(fmt.Sprintf("%v", dlSpeed), 10, 64)
 
 		if dlErr != nil {
-			return errors.New(" dl_speed_in_kbps values must be a valid integer (Kbps), row")
+			return convertErrorToJSON(data["csvrow"], "CSV: dl_speed_in_kbps values must be a valid integer (Kbps), csv value:", strconv.Itoa(int(dlSpeedValue)))
 		}
 		if dlSpeedValue < 0 || dlSpeedValue > 10000000 {
-			return errors.New(" dl_speed_in_kbps values must be between 0 and 10000000, row")
+			return convertErrorToJSON(data["csvrow"], "CSV: dl_speed_in_kbps values must be between 0 and 10000000, csv value:", strconv.Itoa(int(dlSpeedValue)))
 		}
 
 	}
@@ -117,22 +137,22 @@ func validateSpeeds(data map[string]string) error {
 	if ulExists && strings.Contains(ulSpeed, ".") {
 		ulSpeedValue, ulErr := strconv.ParseFloat(fmt.Sprintf("%v", ulSpeed), 64)
 		if ulErr != nil {
-			return errors.New(" ul_speed_in_kbps values must be a valid decimal value to be interpreted as Mpbs, row")
+			return convertErrorToJSON(data["csvrow"], "error: ul_speed_in_kbps values must be a valid decimal value to be interpreted as Mpbs, csv value:", strconv.Itoa(int(ulSpeedValue)))
 		}
 
 		if ulSpeedValue < 0 || ulSpeedValue > 10000 {
-			return errors.New(" ul_speed_in_kbps values must be between 0.00 and 10000.00, row")
+			return convertErrorToJSON(data["csvrow"], "error: ul_speed_in_kbps values must be between 0.00 and 10000.00, csv value:", strconv.Itoa(int(ulSpeedValue)))
 		}
 
 	} else {
 		ulSpeedValue, ulErr := strconv.ParseInt(fmt.Sprintf("%v", ulSpeed), 10, 64)
 
 		if ulErr != nil {
-			return errors.New(" ul_speed_in_kbps values must be valid integer (Kbps), row")
+			return convertErrorToJSON(data["csvrow"], "error: ul_speed_in_kbps values must be valid integer (Kbps), csv value:", strconv.Itoa(int(ulSpeedValue)))
 		}
 
 		if ulSpeedValue < 0 || ulSpeedValue > 10000000 {
-			return errors.New(" ul_speed_in_kbps values must be between 0 and 10000000, row")
+			return convertErrorToJSON(data["csvrow"], "error: ul_speed_in_kbps values must be between 0 and 10000000, csv value:", strconv.Itoa(int(ulSpeedValue)))
 		}
 	}
 	return nil
