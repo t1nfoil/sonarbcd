@@ -56,10 +56,12 @@ type BroadbandData struct {
 
 var csvFileName string
 var outputDirectory string
+var zipName string
 
 func main() {
 	flag.StringVar(&csvFileName, "inputcsv", "bcd.csv", "the name of the csv file to convert")
 	flag.StringVar(&outputDirectory, "outputdir", "./generated-labels", "the name of the directory to output the generated files to")
+	flag.StringVar(&zipName, "zipname", "generated-labels", "the name of the zip file to output the generated files to")
 	flag.Parse()
 
 	// set up customer logger
@@ -206,4 +208,10 @@ func main() {
 	}
 
 	generateLabels(templateData)
+	err = zipUpLabels(outputDirectory, zipName)
+	if err != nil {
+		log.Fatalln(convertErrorToJSON("error zipping up file: ", err.Error()))
+		return
+	}
+
 }
