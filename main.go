@@ -76,19 +76,19 @@ func main() {
 	if _, err := os.Stat(outputDirectory); os.IsNotExist(err) {
 		err := os.Mkdir(outputDirectory, 0755)
 		if err != nil {
-			log.Fatalln(convertErrorToJSON(err.Error()))
+			logger.Fatalln(convertErrorToJSON(err.Error()))
 			return
 		}
 	}
 
 	if _, err := os.Stat(csvFileName); os.IsNotExist(err) {
-		log.Fatalln(convertErrorToJSON(err.Error()))
+		logger.Fatalln(convertErrorToJSON(err.Error()))
 		return
 	}
 
 	records, err := loadCSV(csvFileName)
 	if err != nil {
-		log.Fatalln(convertErrorToJSON(err.Error()))
+		logger.Fatalln(convertErrorToJSON(err.Error()))
 		return
 	}
 
@@ -100,7 +100,7 @@ func main() {
 		data := make(map[string]string)
 		for i, value := range record {
 			if len(value) > 30 {
-				log.Fatalln(convertErrorToJSON("error: value too long for field (greater than 30 characters)", header[i]))
+				logger.Fatalln(convertErrorToJSON("error: value too long for field (greater than 30 characters)", header[i]))
 			}
 			data[header[i]] = value
 		}
@@ -138,7 +138,7 @@ func main() {
 
 		err := calculateUploadDownloadSpeeds(&templateEntry)
 		if err != nil {
-			log.Fatalln(convertErrorToJSON(err.Error()))
+			logger.Fatalln(convertErrorToJSON(err.Error()))
 			return
 		}
 
@@ -148,7 +148,7 @@ func main() {
 
 		err = calculateMonthlyPrice(&templateEntry)
 		if err != nil {
-			log.Fatalln(convertErrorToJSON(err.Error()))
+			logger.Fatalln(convertErrorToJSON(err.Error()))
 			return
 		}
 
@@ -163,12 +163,12 @@ func main() {
 							if fieldValue != "" {
 								indexStr := strconv.Itoa(indexNumber)
 								if _, ok := data[extraFieldType+indexStr]; !ok {
-									log.Fatalln(convertErrorToJSON("error: missing associated field for", fieldName))
+									logger.Fatalln(convertErrorToJSON("error: missing associated field for", fieldName))
 									continue
 								}
 
 								if data[extraFieldType+indexStr] == "" {
-									log.Fatalln(convertErrorToJSON("error: empty value for", fieldName))
+									logger.Fatalln(convertErrorToJSON("error: empty value for", fieldName))
 									continue
 								}
 
@@ -192,7 +192,7 @@ func main() {
 								}
 							}
 						} else {
-							log.Fatalln(convertErrorToJSON("error converting index number:", err.Error()))
+							logger.Fatalln(convertErrorToJSON("error converting index number:", err.Error()))
 						}
 					}
 				}
@@ -213,7 +213,7 @@ func main() {
 	generateLabels(templateData)
 	err = zipUpLabels(outputDirectory, zipName)
 	if err != nil {
-		log.Fatalln(convertErrorToJSON("error zipping up file: ", err.Error()))
+		logger.Fatalln(convertErrorToJSON("error zipping up file: ", err.Error()))
 		return
 	}
 
