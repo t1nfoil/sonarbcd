@@ -117,7 +117,7 @@ func (b *BroadbandConsumerLabel) monthlyDetails(canvas *svg.SVG, thisSectionYSta
 		canvas.Text((width - xMargin), lineY, "$"+template.DataServicePrice, labelGenericTextNormalBoldAnchorEnd)
 		contractDuration, err := strconv.Atoi(template.ContractDuration)
 		if err != nil {
-			log.Fatalln("error:", err)
+			log.Fatalln("", err)
 			return
 		}
 		aOrAn := ""
@@ -341,7 +341,7 @@ func generateLabels(templateData []BroadbandData) error {
 	for templateNumber, template := range templateData {
 		templateFile, err := os.Create(fmt.Sprintf("%v/label_%d.svg", outputDirectory, templateNumber))
 		if err != nil {
-			log.Fatalln("error:", err)
+			log.Fatalln("", err)
 			return err
 		}
 		defer templateFile.Close()

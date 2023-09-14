@@ -69,26 +69,25 @@ func main() {
 
 	err := checkCsvRecords()
 	if err != nil {
-
-		logger.Fatalln(convertErrorToJSON(err.Error()))
+		logger.Fatalln(err.Error())
 	}
 
 	if _, err := os.Stat(outputDirectory); os.IsNotExist(err) {
 		err := os.Mkdir(outputDirectory, 0755)
 		if err != nil {
-			logger.Fatalln(convertErrorToJSON(err.Error()))
+			logger.Fatalln(convertErrorToJSON("NA", err.Error()))
 			return
 		}
 	}
 
 	if _, err := os.Stat(csvFileName); os.IsNotExist(err) {
-		logger.Fatalln(convertErrorToJSON(err.Error()))
+		logger.Fatalln(convertErrorToJSON("NA", err.Error()))
 		return
 	}
 
 	records, err := loadCSV(csvFileName)
 	if err != nil {
-		logger.Fatalln(convertErrorToJSON(err.Error()))
+		logger.Fatalln(convertErrorToJSON("NA", err.Error()))
 		return
 	}
 
@@ -96,11 +95,18 @@ func main() {
 
 	header := records[0]
 
-	for _, record := range records[1:] {
+	for row, record := range records[1:] {
 		data := make(map[string]string)
 		for i, value := range record {
-			if len(value) > 30 {
-				logger.Fatalln(convertErrorToJSON("error: value too long for field (greater than 30 characters)", header[i]))
+			if len(value) > 36 &&
+				header[i] != "discounts_and_bundles_url" &&
+				header[i] != "customer_support_url" &&
+				header[i] != "privacy_policy_url" &&
+				header[i] != "contract_url" {
+				logger.Fatalln(convertErrorToJSON(strconv.Itoa(row+2), " value too long for field (greater than 30 characters)", header[i]))
+			}
+			if len(value) > 256 {
+				logger.Fatalln(convertErrorToJSON(strconv.Itoa(row+2), " value too long for field (greater than 256 characters)", header[i]))
 			}
 			data[header[i]] = value
 		}
@@ -138,7 +144,7 @@ func main() {
 
 		err := calculateUploadDownloadSpeeds(&templateEntry)
 		if err != nil {
-			logger.Fatalln(convertErrorToJSON(err.Error()))
+			logger.Fatalln("NA", convertErrorToJSON(err.Error()))
 			return
 		}
 
@@ -148,7 +154,7 @@ func main() {
 
 		err = calculateMonthlyPrice(&templateEntry)
 		if err != nil {
-			logger.Fatalln(convertErrorToJSON(err.Error()))
+			logger.Fatalln("NA", convertErrorToJSON(err.Error()))
 			return
 		}
 
@@ -163,12 +169,12 @@ func main() {
 							if fieldValue != "" {
 								indexStr := strconv.Itoa(indexNumber)
 								if _, ok := data[extraFieldType+indexStr]; !ok {
-									logger.Fatalln(convertErrorToJSON("error: missing associated field for", fieldName))
+									logger.Fatalln("NA", convertErrorToJSON(" missing associated field for", fieldName))
 									continue
 								}
 
 								if data[extraFieldType+indexStr] == "" {
-									logger.Fatalln(convertErrorToJSON("error: empty value for", fieldName))
+									logger.Fatalln("NA", convertErrorToJSON(" empty value for", fieldName))
 									continue
 								}
 
@@ -192,7 +198,7 @@ func main() {
 								}
 							}
 						} else {
-							logger.Fatalln(convertErrorToJSON("error converting index number:", err.Error()))
+							logger.Fatalln("NA", convertErrorToJSON("error converting index number:", err.Error()))
 						}
 					}
 				}
@@ -213,7 +219,7 @@ func main() {
 	generateLabels(templateData)
 	err = zipUpLabels(outputDirectory, zipName)
 	if err != nil {
-		logger.Fatalln(convertErrorToJSON("error zipping up file: ", err.Error()))
+		logger.Fatalln("NA", convertErrorToJSON("error zipping up file: ", err.Error()))
 		return
 	}
 

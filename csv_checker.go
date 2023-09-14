@@ -46,24 +46,23 @@ func validateIntroductoryFields(data map[string]string) error {
 
 	if introductoryPeriod != "" || introductoryPrice != "" {
 		if introductoryPeriod == "" || introductoryPrice == "" {
-			return errors.New("CSV: Introductory period and price must both be present if either are set, row " + data["csvrow"])
-
+			return convertErrorToJSON(data["csvrow"], "CSV: Introductory period and price must both be present if either are set")
 		}
 
 		if _, err := strconv.Atoi(fmt.Sprintf("%v", introductoryPeriod)); err != nil {
-			return errors.New("CSV: Introductory period must be a valid integer, row " + data["csvrow"])
+			return convertErrorToJSON(data["csvrow"], "CSV: Introductory period must be a valid integer")
 		}
 
 		price := fmt.Sprintf("%v", introductoryPrice)
 		if match, _ := regexp.MatchString(`^\$?\d{1,3}(\.\d{1,2})?$`, price); !match || len(price) > 8 {
-			return errors.New("CSV: Introductory price format should be [$]###.##, row " + data["csvrow"])
+			return convertErrorToJSON(data["csvrow"], "CSV: Introductory price format should be [$]###.##, row")
 		}
 
 		priceValue, err := strconv.ParseFloat(strings.TrimLeft(price, "$"), 64)
 		if err != nil {
-			return errors.New("CSV: Introductory price could not be converted to float64, row " + data["csvrow"])
+			return convertErrorToJSON(data["csvrow"], "CSV: Introductory price could not be converted to float64, row")
 		} else if priceValue != float64(int64(priceValue*100))/100 {
-			return errors.New("CSV: Introductory price must have 2 decimal precision, row " + data["csvrow"])
+			return convertErrorToJSON(data["csvrow"], "CSV: Introductory price must have 2 decimal precision, row")
 		}
 	}
 	return nil
@@ -75,15 +74,15 @@ func validateDataServicePrice(data map[string]string) error {
 	if exists {
 		price := fmt.Sprintf("%v", dataServicePrice)
 		if match, _ := regexp.MatchString(`^\$?\d{1,3}(\.\d{3})*(\.\d{1,3})?$`, price); !match || len(price) > 8 {
-			return errors.New("CSV: Data service price format should be [$]###.###, row " + data["csvrow"])
+			return convertErrorToJSON(data["csvrow"], "CSV: Data service price format should be [$]###.###, row")
 		}
 
 		priceValue, err := strconv.ParseFloat(strings.TrimLeft(price, "$"), 64)
 		if err != nil {
-			return errors.New("CSV: Data service price could not be converted to float64, row " + data["csvrow"])
+			return convertErrorToJSON(data["csvrow"], "CSV: Data service price could not be converted to float64, row")
 
 		} else if priceValue != float64(int64(priceValue*1000))/1000 {
-			return errors.New("CSV: Data service price must have 3 decimal precision, row " + data["csvrow"])
+			return convertErrorToJSON(data["csvrow"], "CSV: Data service price must have 3 decimal precision, row")
 		}
 	}
 	return nil
@@ -96,21 +95,21 @@ func validateSpeeds(data map[string]string) error {
 	if dlExists && strings.Contains(dlSpeed, ".") {
 		dlSpeedValue, dlErr := strconv.ParseFloat(fmt.Sprintf("%v", dlSpeed), 64)
 		if dlErr != nil {
-			return errors.New("error: dl_speed_in_kbps values must be a valid decimal value to be interpreted as Mpbs, row" + data["csvrow"])
+			return errors.New(" dl_speed_in_kbps values must be a valid decimal value to be interpreted as Mpbs, row" + data["csvrow"])
 		}
 
 		if dlSpeedValue < 0 || dlSpeedValue > 10000 {
-			return errors.New("error: dl_speed_in_kbps values must be between 0.00 and 10000.00, row " + data["csvrow"])
+			return errors.New(" dl_speed_in_kbps values must be between 0.00 and 10000.00, row")
 		}
 
 	} else {
 		dlSpeedValue, dlErr := strconv.ParseInt(fmt.Sprintf("%v", dlSpeed), 10, 64)
 
 		if dlErr != nil {
-			return errors.New("error: dl_speed_in_kbps values must be a valid integer (Kbps), row " + data["csvrow"])
+			return errors.New(" dl_speed_in_kbps values must be a valid integer (Kbps), row")
 		}
 		if dlSpeedValue < 0 || dlSpeedValue > 10000000 {
-			return errors.New("error: dl_speed_in_kbps values must be between 0 and 10000000, row " + data["csvrow"])
+			return errors.New(" dl_speed_in_kbps values must be between 0 and 10000000, row")
 		}
 
 	}
@@ -118,22 +117,22 @@ func validateSpeeds(data map[string]string) error {
 	if ulExists && strings.Contains(ulSpeed, ".") {
 		ulSpeedValue, ulErr := strconv.ParseFloat(fmt.Sprintf("%v", ulSpeed), 64)
 		if ulErr != nil {
-			return errors.New("error: ul_speed_in_kbps values must be a valid decimal value to be interpreted as Mpbs, row " + data["csvrow"])
+			return errors.New(" ul_speed_in_kbps values must be a valid decimal value to be interpreted as Mpbs, row")
 		}
 
 		if ulSpeedValue < 0 || ulSpeedValue > 10000 {
-			return errors.New("error: ul_speed_in_kbps values must be between 0.00 and 10000.00, row " + data["csvrow"])
+			return errors.New(" ul_speed_in_kbps values must be between 0.00 and 10000.00, row")
 		}
 
 	} else {
 		ulSpeedValue, ulErr := strconv.ParseInt(fmt.Sprintf("%v", ulSpeed), 10, 64)
 
 		if ulErr != nil {
-			return errors.New("error: ul_speed_in_kbps values must be valid integer (Kbps), row " + data["csvrow"])
+			return errors.New(" ul_speed_in_kbps values must be valid integer (Kbps), row")
 		}
 
 		if ulSpeedValue < 0 || ulSpeedValue > 10000000 {
-			return errors.New("error: ul_speed_in_kbps values must be between 0 and 10000000, row " + data["csvrow"])
+			return errors.New(" ul_speed_in_kbps values must be between 0 and 10000000, row")
 		}
 	}
 	return nil

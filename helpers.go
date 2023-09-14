@@ -22,12 +22,18 @@ func convertPriceToCents(price string) (int, error) {
 type jsonError struct {
 	IsError string `json:"isError"`
 	Message string `json:"Message"`
+	Row     string `json:"row"`
 }
 
-func convertErrorToJSON(messages ...string) error {
+func convertErrorToJSON(row string, messages ...string) error {
 	var j jsonError
 	j.IsError = "true"
+	if row == "NA" {
+		row = ""
+	}
+	j.Row = row
 	j.Message = strings.Join(messages, " ")
+
 	json, _ := json.Marshal(j)
 	return errors.New(string(json))
 }
