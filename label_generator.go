@@ -328,6 +328,8 @@ func (b *BroadbandConsumerLabel) uniquePlanIdentifier(canvas *svg.SVG, thisSecti
 
 var svgStartTag = `
 <!-- coded by andy, katherine and gene @ sonar.software -->
+<!-- https://www.sonar.software -->
+
 <svg
      id="bcd"
      viewBox="{{ .TemplateViewBox }}"
@@ -336,7 +338,6 @@ var svgStartTag = `
 
 func generateLabels(templateData []BroadbandData) error {
 
-	// loop through templateData and open an svg file for each as an io.Writer
 	for templateNumber, template := range templateData {
 		templateFile, err := os.Create(fmt.Sprintf("%v/label_%d.svg", outputDirectory, templateNumber))
 		if err != nil {
@@ -348,7 +349,6 @@ func generateLabels(templateData []BroadbandData) error {
 		templateWriter := &TemplateWriter{}
 
 		canvas := svg.New(templateWriter)
-		//canvas.Start(431, 972, "id=\"bcd\"", "viewBox=\"0 0 431 972\"")
 		fmt.Fprintln(templateWriter, svgStartTag)
 
 		setTemplateStyles(canvas)
