@@ -196,7 +196,7 @@ func (b *BroadbandConsumerLabel) discountsAndBundles(canvas *svg.SVG, thisSectio
 	canvas.Text(xParagraph, b.addY(17), "services like video, phone, and wireless service", labelGenericTextNormal)
 	canvas.Text(xParagraph, b.addY(17), "and use of your own equipment like modems and", labelGenericTextNormal)
 	canvas.Text(xParagraph, b.addY(17), "routers.", labelGenericTextNormal)
-	canvas.Line(xMargin, b.addY(10), width-xMargin, b.getY(), "stroke:black;stroke-width:3")
+	canvas.Line(xMargin, b.addY(10), width-xMargin, b.getY(), "stroke:black;stroke-width:1")
 	canvas.Gend()
 }
 
@@ -227,14 +227,14 @@ func (b *BroadbandConsumerLabel) participatesInACP(canvas *svg.SVG, thisSectionY
 
 func (b *BroadbandConsumerLabel) planSpeeds(canvas *svg.SVG, thisSectionYStart int, template BroadbandData, fontList string) {
 	canvas.Gstyle("")
-	canvas.Text(xMargin, b.addY(23), "Plan Speeds", labelSectionHeading)
+	canvas.Text(xMargin, b.addY(23), "Speeds Provided with Plan", labelSectionHeading)
 	canvas.Text(xIndent, b.addY(17), "Typical Download Speed", labelGenericTextNormal)
 	canvas.Text((width - xMarginRightIndentHard), b.getY(), template.CalculatedDLSpeedInMbps+" Mbps", labelGenericTextNormalHeavyBoldAnchorStart)
 	canvas.Text(xIndent, b.addY(17), "Typical Upload Speed", labelGenericTextNormal)
 	canvas.Text((width - xMarginRightIndentHard), b.getY(), template.CalculatedULSpeedInMbps+" Mbps", labelGenericTextNormalHeavyBoldAnchorStart)
 	canvas.Text(xIndent, b.addY(17), "Typical Latency", labelGenericTextNormal)
 	canvas.Text((width - xMarginRightIndentHard), b.getY(), template.LatencyInMs+" ms", labelGenericTextNormalHeavyBoldAnchorStart)
-	canvas.Line(xMargin, b.addY(10), width-xMargin, b.getY(), "stroke:black;stroke-width:3")
+	canvas.Line(xMargin, b.addY(10), width-xMargin, b.getY(), "stroke:black;stroke-width:1")
 	canvas.Gend()
 
 }
