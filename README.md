@@ -15,8 +15,6 @@ To get started with sonarbcd repository, follow these steps to clone it to your 
    - sonarbcd.exe -> Windows
    - sonarbcd_linux -> Linux
     
-
-
 ## sonarbcd Usage ##
 
 ### Program Flags ###
@@ -28,6 +26,8 @@ The program accepts several command-line flags to customize its behavior:
 - **-outputdir**: Specifies the directory to output the generated files. Default is `./generated-labels`.
 
 - **-checkcsv**: When set, performs basic checks on the CSV file for errors.
+
+- **-zipname**: When set, the name of the zipfile to generate (without the .zip extension), in the output directory. Defaults to generated-labels
 
 ### Usage Example ###
 
