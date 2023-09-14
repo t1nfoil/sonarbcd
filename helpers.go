@@ -20,13 +20,13 @@ func convertPriceToCents(price string) (int, error) {
 }
 
 type jsonError struct {
-	isError string `json:"isError"`
+	IsError string `json:"isError"`
 	Message string `json:"Message"`
 }
 
 func convertErrorToJSON(messages ...string) error {
 	var j jsonError
-	j.isError = "true"
+	j.IsError = "true"
 	j.Message = strings.Join(messages, " ")
 	json, _ := json.Marshal(j)
 	return errors.New(string(json))
