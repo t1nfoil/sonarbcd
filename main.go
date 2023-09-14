@@ -100,7 +100,7 @@ func main() {
 		data := make(map[string]string)
 		for i, value := range record {
 			if len(value) > 30 {
-				log.Fatalln(convertErrorToJSON("error: value too long for field (> 30 characters)", header[i]))
+				log.Fatalln(convertErrorToJSON("error: value too long for field (greater than 30 characters)", header[i]))
 			}
 			data[header[i]] = value
 		}
