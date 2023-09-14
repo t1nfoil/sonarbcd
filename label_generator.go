@@ -327,6 +327,7 @@ func (b *BroadbandConsumerLabel) uniquePlanIdentifier(canvas *svg.SVG, thisSecti
 }
 
 var svgStartTag = `
+<!-- coded by andy, kathernine and gene @ sonar.software -->
 <svg
      id="bcd"
      viewBox="{{ .TemplateViewBox }}"
