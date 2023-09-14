@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -70,22 +69,21 @@ func main() {
 	}
 
 	if _, err := os.Stat(outputDirectory); os.IsNotExist(err) {
-		// create the directory
 		err := os.Mkdir(outputDirectory, 0755)
 		if err != nil {
-			fmt.Println("error:", err)
+			log.Fatalln("error:", err)
 			return
 		}
 	}
 
 	if _, err := os.Stat(csvFileName); os.IsNotExist(err) {
-		fmt.Println("error:", err)
+		log.Fatalln("error:", err)
 		return
 	}
 
 	records, err := loadCSV(csvFileName)
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Fatalln("Error:", err)
 		return
 	}
 
@@ -132,7 +130,7 @@ func main() {
 
 		err := calculateUploadDownloadSpeeds(&templateEntry)
 		if err != nil {
-			fmt.Println("error:", err)
+			log.Fatalln("error:", err)
 			return
 		}
 
@@ -142,7 +140,7 @@ func main() {
 
 		err = calculateMonthlyPrice(&templateEntry)
 		if err != nil {
-			fmt.Println("error:", err)
+			log.Fatalln("error:", err)
 			return
 		}
 
@@ -157,12 +155,12 @@ func main() {
 							if fieldValue != "" {
 								indexStr := strconv.Itoa(indexNumber)
 								if _, ok := data[extraFieldType+indexStr]; !ok {
-									fmt.Println("error: missing associated field for", fieldName)
+									log.Fatalln("error: missing associated field for", fieldName)
 									continue
 								}
 
 								if data[extraFieldType+indexStr] == "" {
-									fmt.Println("error: empty value for", fieldName)
+									log.Fatalln("error: empty value for", fieldName)
 									continue
 								}
 
@@ -186,7 +184,7 @@ func main() {
 								}
 							}
 						} else {
-							fmt.Println("error converting index number:", err)
+							log.Fatalln("error converting index number:", err)
 						}
 					}
 				}

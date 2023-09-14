@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -116,7 +117,7 @@ func (b *BroadbandConsumerLabel) monthlyDetails(canvas *svg.SVG, thisSectionYSta
 		canvas.Text((width - xMargin), lineY, "$"+template.DataServicePrice, labelGenericTextNormalBoldAnchorEnd)
 		contractDuration, err := strconv.Atoi(template.ContractDuration)
 		if err != nil {
-			fmt.Println("error:", err)
+			log.Fatalln("error:", err)
 			return
 		}
 		aOrAn := ""
@@ -338,7 +339,7 @@ func generateLabels(templateData []BroadbandData) error {
 	for templateNumber, template := range templateData {
 		templateFile, err := os.Create(fmt.Sprintf("%v/label_%d.svg", outputDirectory, templateNumber))
 		if err != nil {
-			fmt.Println("error:", err)
+			log.Fatalln("error:", err)
 			return err
 		}
 		defer templateFile.Close()
@@ -407,7 +408,6 @@ func (w *TemplateWriter) ApplyDynamicCalculations(y int) {
 			rectHeight := strconv.Itoa(y - 13)
 			w.bcdTemplate[i] = strings.ReplaceAll(v, "{{ .CalcYRectHeight }}", rectHeight)
 		}
-
 	}
 
 }

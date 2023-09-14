@@ -37,7 +37,7 @@ func isSpeedAnInteger(speed float64) bool {
 	str := strconv.FormatFloat(speed, 'f', -1, 64)
 	isInteger := str == strconv.Itoa(int(speed))
 	if isInteger {
-		return true
+		return isInteger
 	}
 	return false
 }
@@ -72,7 +72,6 @@ func calculateUploadDownloadSpeeds(templateEntry *BroadbandData) error {
 		conversionFactor := 0.001
 		ulSpeed, err := strconv.ParseInt(templateEntry.ULSpeedInKbps, 10, 64)
 		if err != nil {
-			fmt.Println("error:", err)
 			return err
 		}
 
@@ -88,7 +87,6 @@ func calculateUploadDownloadSpeeds(templateEntry *BroadbandData) error {
 		conversionFactor := 1.00
 		dlSpeed, err := strconv.ParseFloat(templateEntry.DLSpeedInKbps, 64)
 		if err != nil {
-			fmt.Println("error:", err)
 			return err
 		}
 
@@ -102,7 +100,6 @@ func calculateUploadDownloadSpeeds(templateEntry *BroadbandData) error {
 		conversionFactor := 0.001
 		dlSpeed, err := strconv.ParseInt(templateEntry.DLSpeedInKbps, 10, 64)
 		if err != nil {
-			fmt.Println("error:", err)
 			return err
 		}
 
