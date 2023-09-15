@@ -129,7 +129,7 @@ func (b *BroadbandConsumerLabel) monthlyDetails(canvas *svg.SVG, thisSectionYSta
 		}
 		contractTerms := "This Monthly Price requires " + aOrAn + " " + template.ContractDuration + " month"
 		canvas.Text(xMargin, b.addY(17), contractTerms, labelGenericTextNormal)
-		canvas.Textspan(width-xMarginRightIndent-45, b.getY(), "", labelGenericTextNormalAnchorEnd)
+		canvas.Textspan(width-xMarginRightIndent-50, b.getY(), "", labelGenericTextNormalAnchorEnd)
 		canvas.Link(template.ContractURL, "contract")
 		canvas.Span("contract", "fill:blue")
 		canvas.LinkEnd()
@@ -193,7 +193,7 @@ func (b *BroadbandConsumerLabel) discountsAndBundles(canvas *svg.SVG, thisSectio
 	canvas.Span("Click here", "fill:blue")
 	canvas.LinkEnd()
 	canvas.TextEnd()
-	canvas.Text(110, b.getY(), "for available billing discounts and pricing", labelGenericTextNormal)
+	canvas.Text(109, b.getY(), "for available billing discounts and pricing", labelGenericTextNormal)
 	canvas.Text(xParagraph, b.addY(17), "options for broadband service bundled with other", labelGenericTextNormal)
 	canvas.Text(xParagraph, b.addY(17), "services like video, phone, and wireless service", labelGenericTextNormal)
 	canvas.Text(xParagraph, b.addY(17), "and use of your own equipment like modems and", labelGenericTextNormal)
@@ -209,7 +209,7 @@ func (b *BroadbandConsumerLabel) participatesInACP(canvas *svg.SVG, thisSectionY
 	canvas.Text(xParagraph, b.addY(17), "monthly cost of internet service. To learn more", labelGenericTextNormal)
 	canvas.Text(xParagraph, b.addY(17), "about the ACP, including to find out whether you", labelGenericTextNormal)
 	canvas.Text(xParagraph, b.addY(17), "qualify, visit:", labelGenericTextNormal)
-	canvas.Textspan(130, b.getY(), "", labelGenericTextNormal)
+	canvas.Textspan(125, b.getY(), "", labelGenericTextNormal)
 	canvas.Link("https://affordableconnectivity.gov/", "affordableconnectivity.gov")
 	canvas.Span("affordableconnectivity.gov", "fill:blue")
 	canvas.LinkEnd()
@@ -292,7 +292,7 @@ func (b *BroadbandConsumerLabel) customerSupport(canvas *svg.SVG, thisSectionYSt
 	canvas.Span("Contact Us", "fill:blue")
 	canvas.LinkEnd()
 	canvas.TextEnd()
-	canvas.Text(width-220, b.getY(), "/ "+template.CustomerSupportPhone, labelGenericTextNormal)
+	canvas.Text(width-225, b.getY(), "/ "+template.CustomerSupportPhone, labelGenericTextNormal)
 	canvas.Line(xMargin, b.addY(15), width-xMargin, b.getY(), "stroke:black;stroke-width:6")
 	canvas.Gend()
 }
