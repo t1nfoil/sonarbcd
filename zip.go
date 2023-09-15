@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
+// written by ChatGPT. :)
 func zipUpLabels(outputDirectory, zipName string) error {
-	// if zip doesn't end it .zip, add it, otherwise leave it alone
 	if !strings.HasSuffix(zipName, ".zip") {
 		zipName += ".zip"
 	}
@@ -26,6 +26,10 @@ func zipUpLabels(outputDirectory, zipName string) error {
 	err = filepath.Walk(outputDirectory, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
+		}
+
+		if !strings.HasSuffix(path, ".svg") {
+			return nil
 		}
 
 		header, err := zip.FileInfoHeader(info)
