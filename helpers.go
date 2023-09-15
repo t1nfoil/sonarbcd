@@ -21,7 +21,7 @@ func convertPriceToCents(price string) (int, error) {
 
 type jsonError struct {
 	IsError string `json:"isError"`
-	Message string `json:"Message"`
+	Message string `json:"message"`
 	Row     string `json:"row"`
 }
 
