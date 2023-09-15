@@ -117,7 +117,7 @@ func (b *BroadbandConsumerLabel) monthlyDetails(canvas *svg.SVG, thisSectionYSta
 		canvas.Text((width - xMargin), lineY, "$"+template.DataServicePrice, labelGenericTextNormalBoldAnchorEnd)
 		contractDuration, err := strconv.Atoi(template.ContractDuration)
 		if err != nil {
-			log.Fatalln("", err)
+			log.Fatalln("error:", err)
 			return
 		}
 		aOrAn := ""
@@ -127,9 +127,9 @@ func (b *BroadbandConsumerLabel) monthlyDetails(canvas *svg.SVG, thisSectionYSta
 			aOrAn = "a"
 		}
 		contractTerms := "This Monthly Price requires " + aOrAn + " " + template.ContractDuration + " month"
-		canvas.Textspan(xMargin, b.addY(17), contractTerms, labelGenericTextNormal)
+		canvas.Text(xMargin, b.addY(17), contractTerms, labelGenericTextNormal)
+		canvas.Textspan(width-xMarginRightIndent-45, b.getY(), "", labelGenericTextNormalBoldAnchorEnd)
 		canvas.Link(template.ContractURL, "contract")
-		// css for blue a links
 		canvas.Span("contract", "fill:blue")
 		canvas.LinkEnd()
 		canvas.TextEnd()
@@ -341,7 +341,7 @@ func generateLabels(templateData []BroadbandData) error {
 	for templateNumber, template := range templateData {
 		templateFile, err := os.Create(fmt.Sprintf("%v/label_%d.svg", outputDirectory, templateNumber))
 		if err != nil {
-			log.Fatalln("", err)
+			log.Fatalln("error:", err)
 			return err
 		}
 		defer templateFile.Close()
