@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"os"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -106,7 +105,7 @@ func main() {
 	var templateData []BroadbandData
 	for _, data := range broadbandData {
 		templateEntry := BroadbandData{
-			CompanyName:                  data["company_name"], //
+			CompanyName:                  data["company_name"],
 			DiscountsAndBundlesURL:       data["discounts_and_bundles_url"],
 			AcpEnabled:                   data["acp"],
 			CustomerSupportURL:           data["customer_support_url"],
@@ -115,14 +114,14 @@ func main() {
 			PrivacyPolicyURL:             data["privacy_policy_url"],
 			FccID:                        data["fcc_id"],
 			DataServiceID:                data["data_service_id"],
-			DataServiceName:              data["data_service_name"],             //
-			FixedOrMobile:                data["fixed_or_mobile"],               //
-			DataServicePrice:             data["data_service_price"],            //
-			BillingFrequencyInMonths:     data["billing_frequency_in_months"],   //
-			IntroductoryPeriodInMonths:   data["introductory_period_in_months"], //
-			IntroductoryPricePerMonth:    data["introductory_price_per_month"],  //
-			ContractDuration:             data["contract_duration"],             //
-			ContractURL:                  data["contract_url"],                  //
+			DataServiceName:              data["data_service_name"],
+			FixedOrMobile:                data["fixed_or_mobile"],
+			DataServicePrice:             data["data_service_price"],
+			BillingFrequencyInMonths:     data["billing_frequency_in_months"],
+			IntroductoryPeriodInMonths:   data["introductory_period_in_months"],
+			IntroductoryPricePerMonth:    data["introductory_price_per_month"],
+			ContractDuration:             data["contract_duration"],
+			ContractURL:                  data["contract_url"],
 			EarlyTerminationFee:          data["early_termination_fee"],
 			DLSpeedInKbps:                data["dl_speed_in_kbps"],
 			ULSpeedInKbps:                data["ul_speed_in_kbps"],
@@ -148,22 +147,22 @@ func main() {
 			return
 		}
 
+		// TODO: refactor the error code into csv_checker validation function
 		for fieldName, fieldValue := range data {
 			if len(fieldName) > 0 {
-				for extraFieldKey, extraFieldType := range extraFieldTypes {
-					regex := regexp.MustCompile(extraFieldKey)
-					if regex.MatchString(fieldName) {
-						splitKey := regexp.MustCompile("_").Split(fieldName, -1)
+				for extraFieldName, extraFieldPrice := range extraFieldTypes {
+					if strings.Contains(fieldName, extraFieldName) {
+						splitKey := strings.Split(fieldName, "_")
 						indexNumber, err := strconv.Atoi(splitKey[len(splitKey)-1])
 						if err == nil {
 							if fieldValue != "" {
 								indexStr := strconv.Itoa(indexNumber)
-								if _, ok := data[extraFieldType+indexStr]; !ok {
+								if _, ok := data[extraFieldPrice+indexStr]; !ok {
 									logger.Fatalln("NA", convertErrorToJSON("error: missing associated field for", fieldName))
 									continue
 								}
 
-								if data[extraFieldType+indexStr] == "" {
+								if data[extraFieldPrice+indexStr] == "" {
 									logger.Fatalln("NA", convertErrorToJSON("error: empty value for", fieldName))
 									continue
 								}
@@ -175,14 +174,14 @@ func main() {
 								e := AdditionalCharges{
 									FieldNumber: indexNumber,
 									ChargeName:  fieldValue,
-									ChargeValue: data[extraFieldType+indexStr],
+									ChargeValue: data[extraFieldPrice+indexStr],
 								}
 
-								if strings.Contains(extraFieldType, "one_time") {
+								if strings.Contains(extraFieldPrice, "one_time") {
 									templateEntry.ExtraOneTimeFields = append(templateEntry.ExtraOneTimeFields, e)
 									continue
 								}
-								if strings.Contains(extraFieldType, "monthly") {
+								if strings.Contains(extraFieldPrice, "monthly") {
 									templateEntry.ExtraMonthlyFields = append(templateEntry.ExtraMonthlyFields, e)
 									continue
 								}

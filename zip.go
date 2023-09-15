@@ -5,10 +5,16 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func zipUpLabels(outputDirectory, zipName string) error {
-	zipFile, err := os.Create(filepath.Join(outputDirectory, zipName+".zip"))
+	// if zip doesn't end it .zip, add it, otherwise leave it alone
+	if !strings.HasSuffix(zipName, ".zip") {
+		zipName += ".zip"
+	}
+
+	zipFile, err := os.Create(filepath.Join(outputDirectory, zipName))
 	if err != nil {
 		return err
 	}
