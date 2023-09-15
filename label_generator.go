@@ -25,6 +25,7 @@ const (
 	labelCompanyName                           = "font-size:18pt;letter-spacing:0em;font-weight:bold;font-family:'Roboto';text-anchor:left"
 	labelPackageName                           = "font-size:14pt;letter-spacing:0em;font-weight:800;font-family:'Roboto Flex';text-anchor:left"
 	labelGenericTextNormal                     = "font-size:12pt;letter-spacing:0em;font-family:Roboto;text-anchor:left"
+	labelGenericTextNormalAnchorEnd            = "font-size:12pt;letter-spacing:0em;font-family:Roboto;text-anchor:end"
 	labelGenericTextNormalBold                 = "font-size:12pt;letter-spacing:0em;font-weight:900;font-family:Roboto;text-anchor:left"
 	labelGenericTextNormalBoldAnchorEnd        = "font-size:12pt;letter-spacing:0em;font-weight:bold;font-family:'Roboto Flex';text-anchor:end"
 	labelGenericTextNormalBoldAnchorStart      = "font-size:12pt;letter-spacing:0em;font-weight:bold;font-family:'Roboto Flex';text-anchor:start"
@@ -128,7 +129,7 @@ func (b *BroadbandConsumerLabel) monthlyDetails(canvas *svg.SVG, thisSectionYSta
 		}
 		contractTerms := "This Monthly Price requires " + aOrAn + " " + template.ContractDuration + " month"
 		canvas.Text(xMargin, b.addY(17), contractTerms, labelGenericTextNormal)
-		canvas.Textspan(width-xMarginRightIndent-45, b.getY(), "", labelGenericTextNormalBoldAnchorEnd)
+		canvas.Textspan(width-xMarginRightIndent-45, b.getY(), "", labelGenericTextNormalAnchorEnd)
 		canvas.Link(template.ContractURL, "contract")
 		canvas.Span("contract", "fill:blue")
 		canvas.LinkEnd()
