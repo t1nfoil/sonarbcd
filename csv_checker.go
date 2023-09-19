@@ -50,12 +50,11 @@ func validateFieldLengths(data map[string]string) error {
 		if strings.Contains(key, "_url") && len(value) > 256 {
 			return convertErrorToJSON(data["csvrow"], "CSV: ", key, " must be less than 256 characters in length")
 		}
-	}
 
-	for key, value := range data {
 		if !strings.Contains(key, "_url") && key != "company_name" && len(value) > 36 {
 			return convertErrorToJSON(data["csvrow"], "CSV: ", key, " must be less than 36 characters in length")
 		}
+
 	}
 
 	if len(data["company_name"]) > 32 {
